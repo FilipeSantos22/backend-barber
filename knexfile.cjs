@@ -14,7 +14,7 @@ module.exports = {
     pool: { min: 2, max: 10 },
     migrations: {
       directory: path.resolve(__dirname, 'src', 'database', 'migrations'),
-      extension: 'js',
+      extension: 'cjs',
       tableName: 'knex_migrations'
     },
     seeds: {
