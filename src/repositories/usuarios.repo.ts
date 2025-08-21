@@ -22,6 +22,10 @@ export const UsuariosRepo = {
     async deleteById(idUsuario: number) {
         const [row] = await db<Usuario>('usuarios').where({ idUsuario }).delete().returning('*'); 
         return row;
+    },
+
+    async findByEmail(email: string) {
+        return db<Usuario>('usuarios').where({ email }).first();
     }
 
 };

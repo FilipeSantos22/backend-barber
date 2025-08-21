@@ -29,7 +29,10 @@ export const UsuariosService = {
 
     async deleteById(idUsuario: number) {
         return UsuariosRepo.deleteById(idUsuario);
-    }
+    },
 
+    async findByEmail(email: string) {
+        return UsuariosRepo.findByEmail(email);
+    }
 
 };

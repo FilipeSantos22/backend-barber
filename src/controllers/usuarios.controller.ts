@@ -13,6 +13,12 @@ export const UserController = {
 
     async create(req: Request, res: Response, next: NextFunction) {
         try {
+
+            const emailExists = await UserController.checkEmailExists(req.body.email);
+            if (emailExists) {
+                return res.status(400).json({ error: 'Email ' + req.body.email + ' já cadastrado.' });
+            }
+
             const created = await UsuariosService.create(req.body);
             res.status(201).json(created);
         } catch (err) {
@@ -54,5 +60,10 @@ export const UserController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    async checkEmailExists(email: string): Promise<boolean> {
+        const user = await UsuariosService.findByEmail(email);
+        return !!user;
     }
 };
