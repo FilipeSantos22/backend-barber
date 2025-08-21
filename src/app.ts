@@ -1,23 +1,17 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import cors from 'cors';
+import usuariosRouter from './routes/usuarios.routes';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.get('/', (_req: Request, res: Response) => {
-  res.send('Backend Barber - TypeScript funcionando');
+app.use('/api/usuarios', usuariosRouter);
+
+// middleware de erro simples
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message || 'internal_error' });
 });
 
-app.get('/api/health', (_req: Request, res: Response) => {
-  res.json({
-    status: 'ok',
-    time: new Date().toISOString(),
-    env: process.env.NODE_ENV ?? 'development'
-  });
-});
-
-const port = Number(process.env.PORT) || 3001;
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Servidor rodando em http://localhost:${port}`);
-});
+export default app;

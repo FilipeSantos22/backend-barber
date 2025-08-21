@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Backend Barber - API
+  version: "0.1.0"
+  description: API para o sistema Barber — usuários, barbearias, serviços e agendamentos.
+servers:
+  - url: http://localhost:3001
+    description: Desenvolvimento
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        idUsuario:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        telefone:
+          type: string
+        tipo:
+          type: string
+          description: admin | barbeiro | cliente
+        data_criacao:
+          type: string
+          format: date-time
+      required: [nome, email]
+    Barbearia:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        endereco:
+          type: string
+        telefone:
+          type: string
+        data_criacao:
+          type: string
+          format: date-time
+      required: [nome]
+    Servico:
+      type: object
+      properties:
+        idServico:
+          type: integer
+        nome:
+          type: string
+        preco:
+          type: number
+          format: float
+        duracao_minutos:
+          type: integer
+        idBarbearia:
+          type: integer
+        data_criacao:
+          type: string
+          format: date-time
+      required: [nome, preco, idBarbearia]
+    Agendamento:
+      type: object
+      properties:
+        idAgendamento:
+          type: integer
+        idUsuario:
+          type: integer
+        idBarbeiro:
+          type: integer
+        idServico:
+          type: integer
+        idBarbearia:
+          type: integer
+        data_hora:
+          type: string
+          format: date-time
+        descricao:
+          type: string
+        status:
+          type: string
+          description: pendente|confirmado|cancelado|finalizado
+        data_criacao:
+          type: string
+          format: date-time
+      required: [idUsuario, idBarbeiro, idServico, idBarbearia, data_hora]
+paths:
+  /api/usuarios:
+    get:
+      summary: Listar usuários
+      responses:
+        "200":
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+    post:
+      summary: Criar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        "201":
+          description: Usuário criado
+  /api/usuarios/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obter usuário por id
+      responses:
+        "200":
+          description: Usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+    put:
+      summary: Atualizar usuário
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        "200":
+          description: Usuário atualizado
+    delete:
+      summary: Excluir usuário
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Usuário excluído
+  /api/barbearias:
+    get:
+      summary: Listar barbearias
+      responses:
+        "200":
+          description: Lista de barbearias
+    post:
+      summary: Criar barbearia
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Barbearia'
+      responses:
+        "201":
+          description: Barbearia criada
+  /api/servicos:
+    get:
+      summary: Listar serviços
+      responses:
+        "200":
+          description: Lista de serviços
+    post:
+      summary: Criar serviço
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Servico'
+      responses:
+        "201":
+          description: Serviço criado
+  /api/agendamentos:
+    get:
+      summary: Listar agendamentos
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de agendamentos
+    post:
+      summary: Criar agendamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agendamento'
+      responses:
+        "201":
+          description: Agendamento criado
+  /auth/login:
+    post:
+      summary: Autenticação (retorna JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Token de acesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
