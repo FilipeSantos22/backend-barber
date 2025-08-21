@@ -1,5 +1,5 @@
 export type Usuario = {
-  id: number; // ou string se for UUID
+  idUsuario: number; 
   nome: string;
   email: string;
   telefone?: string;

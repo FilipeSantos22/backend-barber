@@ -114,9 +114,9 @@ paths:
       responses:
         "201":
           description: Usuário criado
-  /api/usuarios/{id}:
+  /api/usuarios/{idUsuario}:
     parameters:
-      - name: id
+      - name: idUsuario
         in: path
         required: true
         schema:
