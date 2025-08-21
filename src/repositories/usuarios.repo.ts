@@ -17,6 +17,11 @@ export const UsuariosRepo = {
     async update(idUsuario: number, payload: Partial<Usuario>) {
         const [row] = await db<Usuario>('usuarios').where({ idUsuario }).update(payload).returning('*');
         return row;
+    },
+
+    async deleteById(idUsuario: number) {
+        const [row] = await db<Usuario>('usuarios').where({ idUsuario }).delete().returning('*'); 
+        return row;
     }
 
 };

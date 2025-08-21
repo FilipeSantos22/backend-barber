@@ -44,5 +44,15 @@ export const UserController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    async deleteById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = Number(req.params.id);
+            await UsuariosService.deleteById(id);
+            res.sendStatus(204);
+        } catch (err) {
+            next(err);
+        }
     }
 };

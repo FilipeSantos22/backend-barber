@@ -25,6 +25,10 @@ export const UsuariosService = {
 
     async findById(idUsuario: number) {
         return UsuariosRepo.findById(idUsuario);
+    },
+
+    async deleteById(idUsuario: number) {
+        return UsuariosRepo.deleteById(idUsuario);
     }
 
 

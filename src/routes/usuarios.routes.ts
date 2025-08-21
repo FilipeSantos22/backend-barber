@@ -12,5 +12,6 @@ router.get('/', asyncHandler(UserController.findAll));
 router.get('/:id', asyncHandler(UserController.findById));
 router.post('/', asyncHandler(UserController.create));
 router.put('/:id', asyncHandler(UserController.update));
+router.delete('/:id', asyncHandler(UserController.deleteById));
 
 export default router;
