@@ -26,6 +26,17 @@ export const UsuariosRepo = {
 
     async findByEmail(email: string) {
         return db<Usuario>('usuarios').where({ email }).first();
-    }
+    },
 
+    // --- métodos simplificados sem bcrypt ---
+    // compara strings (apenas para desenvolvimento temporário)
+    async comparePasswords(plainPassword: string, storedPassword: string): Promise<boolean> {
+        // WARNING: comparação em texto plano. Trocar por bcrypt/hash depois.
+        return plainPassword === storedPassword;
+    },
+
+    // atualiza a senha diretamente (texto plano)
+    async updatePassword(idUsuario: number, newPassword: string): Promise<void> {
+        await db<Usuario>('usuarios').where({ idUsuario }).update({ senha: newPassword });
+    }
 };

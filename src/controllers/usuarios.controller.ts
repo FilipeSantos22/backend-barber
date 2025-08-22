@@ -65,5 +65,27 @@ export const UserController = {
     async checkEmailExists(email: string): Promise<boolean> {
         const user = await UsuariosService.findByEmail(email);
         return !!user;
+    },
+
+    async changePassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const idUsuario = Number(req.params.id);
+            const { senhaAntiga, senha } = req.body;
+            console.log({ idUsuario, senhaAntiga, senha });
+            const user = await UsuariosService.findById(idUsuario);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado.' });
+            }
+
+            const isMatch = await UsuariosService.comparePasswords(senhaAntiga, user.senha);
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Senha antiga não confere.' });
+            }
+
+            await UsuariosService.updatePassword(idUsuario, senha);
+            res.sendStatus(204);
+        } catch (err) {
+            next(err);
+        }
     }
 };

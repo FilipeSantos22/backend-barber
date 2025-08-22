@@ -13,5 +13,6 @@ router.get('/:id', asyncHandler(UserController.findById));
 router.post('/', asyncHandler(UserController.create));
 router.put('/:id', asyncHandler(UserController.update));
 router.delete('/:id', asyncHandler(UserController.deleteById));
+router.patch('/:id/senha', asyncHandler(UserController.changePassword));
 
 export default router;

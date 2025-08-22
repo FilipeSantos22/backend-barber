@@ -33,6 +33,14 @@ export const UsuariosService = {
 
     async findByEmail(email: string) {
         return UsuariosRepo.findByEmail(email);
+    },
+
+    async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
+        return UsuariosRepo.comparePasswords(plainPassword, hashedPassword);
+    },
+
+    async updatePassword(id: number, newPassword: string): Promise<void> {
+        return UsuariosRepo.updatePassword(id, newPassword);
     }
 
 };
