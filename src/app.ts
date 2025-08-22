@@ -10,15 +10,13 @@
 import express from 'express';
 import cors from 'cors';
 import apiRouter from './routes';
-import { notFound, errorHandler } from './middlewares/error';
+import { errorHandler, notFound } from './middlewares/error';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/api', apiRouter);
-app.use(notFound);
-app.use(errorHandler);
-
-
+app.use(notFound);      // 404 handler
+app.use(errorHandler);  // middleware de erro central
 export default app;

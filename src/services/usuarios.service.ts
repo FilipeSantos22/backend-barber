@@ -2,11 +2,11 @@ import { UsuariosRepo } from '../repositories/usuarios.repo';
 
 export const UsuariosService = {
 
-    async findAll() { 
+    async listarTodos() { 
         return UsuariosRepo.findAll(); 
     },
 
-    async create(payload: any) {
+    async criar(payload: any) {
         // validações simples aqui
         if (!payload.email) {
             throw new Error('email obrigatório');
@@ -14,7 +14,7 @@ export const UsuariosService = {
             return UsuariosRepo.create(payload);
     },
 
-    async update(id: number, payload: any) {
+    async atualizar(id: number, payload: any) {
         // validações simples aqui
         if (!payload.email) {
             throw new Error('email obrigatório');
@@ -23,23 +23,23 @@ export const UsuariosService = {
         return UsuariosRepo.update(id, payload);
     },
 
-    async findById(idUsuario: number) {
+    async buscarPorId(idUsuario: number) {
         return UsuariosRepo.findById(idUsuario);
     },
 
-    async deleteById(idUsuario: number) {
+    async deletarPorId(idUsuario: number) {
         return UsuariosRepo.deleteById(idUsuario);
     },
 
-    async findByEmail(email: string) {
+    async buscarPorEmail(email: string) {
         return UsuariosRepo.findByEmail(email);
     },
 
-    async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
+    async compararSenhas(plainPassword: string, hashedPassword: string): Promise<boolean> {
         return UsuariosRepo.comparePasswords(plainPassword, hashedPassword);
     },
 
-    async updatePassword(id: number, newPassword: string): Promise<void> {
+    async atualizarSenha(id: number, newPassword: string): Promise<void> {
         return UsuariosRepo.updatePassword(id, newPassword);
     }
 
