@@ -54,17 +54,39 @@ components:
           type: integer
         nome:
           type: string
+        descricao:
+          type: string
+          nullable: true
+        duracao_minutos:
+          type: integer
+          nullable: true
         preco:
           type: number
           format: float
-        duracao_minutos:
-          type: integer
+          nullable: true
         idBarbearia:
           type: integer
         data_criacao:
           type: string
           format: date-time
-      required: [nome, preco, idBarbearia]
+        data_atualizacao:
+          type: string
+          format: date-time
+    ServicoBarbeiro:
+      type: object
+      properties:
+        idServico:
+          type: integer
+        idBarbeiro:
+          type: integer
+        data_criacao:
+          type: string
+          format: date-time
+          nullable: true
+        data_atualizacao:
+          type: string
+          format: date-time
+          nullable: true
     Agendamento:
       type: object
       properties:
@@ -231,3 +253,59 @@ paths:
                 properties:
                   token:
                     type: string
+  /api/usuarios/{id}/servicos:
+    get:
+      summary: Lista serviços vinculados a um barbeiro (usuário)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de serviços
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Servico'
+        '400':
+          description: id inválido
+        '404':
+          description: barbeiro não encontrado
+
+  /api/servico_barbeiro:
+    post:
+      summary: Vincular serviço a barbeiro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicoBarbeiro'
+      responses:
+        '201':
+          description: relação criada
+        '400':
+          description: payload inválido
+
+    delete:
+      summary: Remover vinculo serviço/barbeiro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idServico:
+                  type: integer
+                idBarbeiro:
+                  type: integer
+      responses:
+        '204':
+          description: relação removida
+        '400':
+          description: payload inválido
