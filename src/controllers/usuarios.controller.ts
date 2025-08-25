@@ -85,5 +85,22 @@ export const UsuariosController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    async listarServicos(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id ?? '');
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido. Deve conter apenas números.' });
+            }
+            const id = Number(raw);
+            const servicos = await UsuariosService.listarServicosDoBarbeiro(id);
+            if (!servicos || servicos.length === 0) {
+                return res.status(404).json({ message: 'Esse barbeiro não possui serviços cadastrados', servicos: [] });
+            }
+            res.json(servicos);
+        } catch (err) {
+            next(err);
+        }
     }
 };

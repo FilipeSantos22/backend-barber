@@ -10,6 +10,7 @@ const router = Router();
 
 router.get('/', asyncHandler(UsuariosController.listar));
 router.get('/:id', asyncHandler(UsuariosController.buscarPorId));
+router.get('/:id/servicos', asyncHandler(UsuariosController.listarServicos));
 router.post('/', asyncHandler(UsuariosController.criar));
 router.put('/:id', asyncHandler(UsuariosController.atualizar));
 router.delete('/:id', asyncHandler(UsuariosController.remover));

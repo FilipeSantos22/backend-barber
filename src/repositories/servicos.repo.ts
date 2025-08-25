@@ -6,15 +6,15 @@ export const ServicosRepo = {
         return db<Servico>('servico').select('*').where({ excluido: false });
     },
 
-  async findById(id: number): Promise<Servico | undefined> {
+    async findById(id: number): Promise<Servico | undefined> {
         return db<Servico>('servico').where({ idServico: id, excluido: false }).first();
     },
 
-  async findByBarbearia(idBarbearia: number): Promise<Servico[]> {
+    async findByBarbearia(idBarbearia: number): Promise<Servico[]> {
         return db<Servico>('servico').where({ idBarbearia, excluido: false }).select('*');
     },
 
-  async create(payload: Partial<Servico>): Promise<Servico> {
+    async create(payload: Partial<Servico>): Promise<Servico> {
         const [row] = await db<Servico>('servico').insert(payload).returning('*');
         if (!row) {
             throw new Error('Erro ao criar novo serviço');
@@ -22,12 +22,12 @@ export const ServicosRepo = {
         return row;
     },
 
-  async update(id: number, payload: Partial<Servico>): Promise<Servico | undefined> {
+    async update(id: number, payload: Partial<Servico>): Promise<Servico | undefined> {
         const [row] = await db<Servico>('servico').where({ idServico: id, excluido: false }).update(payload).returning('*');
         return row;
     },
 
-  async deleteById(id: number): Promise<void> {
+    async deleteById(id: number): Promise<void> {
         await db('servico').where({ idServico: id }).update({ excluido: true });
     }
 };

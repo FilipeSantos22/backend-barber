@@ -1,4 +1,7 @@
 import { UsuariosRepo } from '../repositories/usuarios.repo';
+import { HttpError } from '../utils/httpError';
+import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
+import type { Servico } from '../models/servico';
 
 export const UsuariosService = {
 
@@ -11,7 +14,7 @@ export const UsuariosService = {
         if (!payload.email) {
             throw new Error('email obrigatório');
         }
-            return UsuariosRepo.create(payload);
+        return UsuariosRepo.create(payload);
     },
 
     async atualizar(id: number, payload: any) {
@@ -41,6 +44,20 @@ export const UsuariosService = {
 
     async atualizarSenha(id: number, newPassword: string): Promise<void> {
         return UsuariosRepo.updatePassword(id, newPassword);
+    },
+
+    async listarServicosDoBarbeiro(idUsuario: number): Promise<Servico[]> {
+        const usuario = await UsuariosRepo.findById(idUsuario);
+        if (!usuario) {
+            throw new HttpError(404, 'Usuário não encontrado');
+        }
+        // opcional: validar tipo do usuário (barbeiro)
+        if (usuario.tipo !== 'barbeiro' && usuario.tipo !== 'admin') {
+            throw new HttpError(400, 'Usuário não é barbeiro');
+        }
+        let servicos = await ServicoBarbeiroRepo.findByBarbeiroId(idUsuario);
+
+        return servicos;
     }
 
 };
