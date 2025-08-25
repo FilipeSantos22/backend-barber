@@ -1,0 +1,85 @@
+import type { Request, Response, NextFunction } from 'express';
+import { AgendamentosService } from '../services/agendamentos.service';
+
+export const AgendamentosController = {
+    async listar(_req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await AgendamentosService.listar();
+            res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async buscarPorId(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const id = Number(raw);
+            const item = await AgendamentosService.buscarPorId(id);
+            if (!item) {
+                return res.status(404).json({ error: 'Agendamento não encontrado' });
+            }
+            res.json(item);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async criar(req: Request, res: Response, next: NextFunction) {
+        try {
+            const created = await AgendamentosService.criar(req.body);
+            res.status(201).json(created);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async atualizar(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            const id = Number(raw);
+            let statusPermitido = true;
+
+            if (req.body.status !== undefined) {
+                const raw = String(req.body.status).trim();
+                req.body.status = raw.toLowerCase();
+                statusPermitido = await AgendamentosController.checkStatus(req.body.status);
+            }
+            if (!statusPermitido) {
+                throw new Error('Status inválido para este agendamento');
+            }
+        
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const updated = await AgendamentosService.atualizar(id, req.body);
+            res.json(updated);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async remover(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const id = Number(raw);
+            await AgendamentosService.remover(id);
+            res.sendStatus(204);
+        } catch (err) {
+            next(err);
+        }
+    },
+     
+    async checkStatus(status: string): Promise<boolean> {
+
+        status = status.toLowerCase();
+        const allowedStatuses = ['pendente', 'confirmado', 'cancelado', 'finalizado'];
+        return allowedStatuses.includes(status);
+    }
+};

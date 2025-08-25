@@ -13,9 +13,13 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     // em dev pode logar stack; em produção omitir detalhes
     // console.error(err);
 
-    res.status(status).json({
-        error: message,
-        ...(process.env.NODE_ENV !== 'production' ? { stack: err?.stack } : {})
+    /*  Com esse código abaixo, mostra o erro que está dando na requisição  <-
+        res.status(status).json({
+            error: message,
+            ...(process.env.NODE_ENV !== 'production' ? { stack: err?.stack } : {})
+        });
+    */
+      res.status(status).json({ error: message
     });
 };
 
