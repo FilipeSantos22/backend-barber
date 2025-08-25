@@ -3,15 +3,15 @@ import db from '../database/knex';
 
 export const ServicosRepo = {
     async findAll(): Promise<Servico[]> {
-        return db<Servico>('servico').select('*');
+        return db<Servico>('servico').select('*').where({ excluido: false });
     },
 
   async findById(id: number): Promise<Servico | undefined> {
-        return db<Servico>('servico').where({ idServico: id }).first();
+        return db<Servico>('servico').where({ idServico: id, excluido: false }).first();
     },
 
   async findByBarbearia(idBarbearia: number): Promise<Servico[]> {
-        return db<Servico>('servico').where({ idBarbearia }).select('*');
+        return db<Servico>('servico').where({ idBarbearia, excluido: false }).select('*');
     },
 
   async create(payload: Partial<Servico>): Promise<Servico> {
@@ -23,11 +23,11 @@ export const ServicosRepo = {
     },
 
   async update(id: number, payload: Partial<Servico>): Promise<Servico | undefined> {
-        const [row] = await db<Servico>('servico').where({ idServico: id }).update(payload).returning('*');
+        const [row] = await db<Servico>('servico').where({ idServico: id, excluido: false }).update(payload).returning('*');
         return row;
     },
 
   async deleteById(id: number): Promise<void> {
-        await db('servico').where({ idServico: id }).del();
+        await db('servico').where({ idServico: id }).update({ excluido: true });
     }
 };

@@ -5,4 +5,5 @@ export type Barbearia = {
     telefone?: string | null;
     data_criacao?: string | null;
     data_atualizacao?: string | null;
+    excluido?: boolean;
 };

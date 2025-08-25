@@ -7,4 +7,5 @@ export type Usuario = {
   tipo?: 'admin' | 'barbeiro' | 'cliente';
   data_criacao?: string;
   data_atualizacao?: string;
+  excluido?: boolean;
 };

@@ -3,19 +3,19 @@ import db from '../database/knex';
 
 export const AgendamentosRepo = {
     async findAll(): Promise<Agendamento[]> {
-        return db<Agendamento>('agendamento').select('*');
+        return db<Agendamento>('agendamento').select('*').where({ excluido: false });
     },
 
     async findById(id: number): Promise<Agendamento | undefined> {
-        return db<Agendamento>('agendamento').where({ idAgendamento: id }).first();
+        return db<Agendamento>('agendamento').where({ idAgendamento: id, excluido: false }).first();
     },
 
     async findByUsuario(idUsuario: number): Promise<Agendamento[]> {
-        return db<Agendamento>('agendamento').where({ idUsuario }).select('*');
+        return db<Agendamento>('agendamento').where({ idUsuario, excluido: false }).select('*');
     },
 
     async findByBarbearia(idBarbearia: number): Promise<Agendamento[]> {
-        return db<Agendamento>('agendamento').where({ idBarbearia }).select('*');
+        return db<Agendamento>('agendamento').where({ idBarbearia, excluido: false }).select('*');
     },
 
     async create(payload: Partial<Agendamento>): Promise<Agendamento> {
@@ -32,7 +32,7 @@ export const AgendamentosRepo = {
     },
 
     async deleteById(id: number): Promise<void> {
-        await db('agendamento').where({ idAgendamento: id }).del().returning('*');
+        await db('agendamento').where({ idAgendamento: id }).update({ excluido: true });
     },
 
 };

@@ -6,4 +6,5 @@ export type Servico = {
     idBarbearia: number; // FK
     data_criacao?: string | null;
     data_atualizacao?: string | null;
+    excluido?: boolean;
 };
