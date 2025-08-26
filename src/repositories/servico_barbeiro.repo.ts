@@ -32,7 +32,7 @@ export const ServicoBarbeiroRepo = {
     },
 
     async findAll(): Promise<any[]> {
-        return db('servico_barbeiro').select('*');
+        return db('servico_barbeiro').select('*').where({ excluido: false });
     },
 
 };

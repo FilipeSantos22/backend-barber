@@ -20,7 +20,14 @@ export const UsuariosController = {
             }
 
             const created = await UsuariosService.criar(req.body);
-            res.status(201).json(created);
+            if (!created) {
+                return res.status(500).json({ error: 'Erro ao criar usuário.' });
+            }
+            const { senha, ...publicUser } = created;
+
+            res.status(201)
+            .location(`/api/usuarios/${publicUser.idUsuario}`)
+            .json(publicUser);
         } catch (err) {
             next(err);
         }
