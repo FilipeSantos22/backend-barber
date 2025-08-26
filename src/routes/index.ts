@@ -3,6 +3,7 @@ import usuariosRouter from './usuarios.routes';
 import barbeariasRouter from './barbearias.routes';
 import servicosRouter from './servicos.routes';
 import agendamentosRouter from './agendamentos.routes';
+import servicosBarbeiroRouter from './servico_barbeiro.routes';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.use('/usuarios', usuariosRouter);
 router.use('/barbearias', barbeariasRouter);
 router.use('/servicos', servicosRouter);
 router.use('/agendamentos', agendamentosRouter);
+router.use('/servicos-barbeiro', servicosBarbeiroRouter);
 
 // aqui você pode adicionar outras rotas, ex:
 // import servicosRouter from './servicos.routes';

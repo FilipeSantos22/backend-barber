@@ -11,7 +11,6 @@ export const ServicoBarbeiroRepo = {
             .select('servico.*');
     },
 
-
     async findByServicoId(idServico: number): Promise<any[]> {
         return db('servico_barbeiro').where({ idServico }).select('*');
     },
@@ -24,7 +23,16 @@ export const ServicoBarbeiroRepo = {
         });
     },
 
-    async removeRelation(idServico: number, idBarbeiro: number) {
-        return db('servico_barbeiro').where({ idServico, idBarbeiro }).del();
-    }
+    async removeRelationByBarber(idBarbeiro: number) {
+        return db('servico_barbeiro').where({ idBarbeiro }).update({ excluido: true });
+    },
+
+    async removeRelationByServico(idServico: number) {
+        return db('servico_barbeiro').where({ idServico }).update({ excluido: true });
+    },
+
+    async findAll(): Promise<any[]> {
+        return db('servico_barbeiro').select('*');
+    },
+
 };

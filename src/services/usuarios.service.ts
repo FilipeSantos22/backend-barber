@@ -46,18 +46,4 @@ export const UsuariosService = {
         return UsuariosRepo.updatePassword(id, newPassword);
     },
 
-    async listarServicosDoBarbeiro(idUsuario: number): Promise<Servico[]> {
-        const usuario = await UsuariosRepo.findById(idUsuario);
-        if (!usuario) {
-            throw new HttpError(404, 'Usuário não encontrado');
-        }
-        // opcional: validar tipo do usuário (barbeiro)
-        if (usuario.tipo !== 'barbeiro' && usuario.tipo !== 'admin') {
-            throw new HttpError(400, 'Usuário não é barbeiro');
-        }
-        let servicos = await ServicoBarbeiroRepo.findByBarbeiroId(idUsuario);
-
-        return servicos;
-    }
-
 };
