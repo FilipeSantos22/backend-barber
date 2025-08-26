@@ -14,8 +14,5 @@ router.use('/servicos', servicosRouter);
 router.use('/agendamentos', agendamentosRouter);
 router.use('/servicos-barbeiro', servicosBarbeiroRouter);
 
-// aqui você pode adicionar outras rotas, ex:
-// import servicosRouter from './servicos.routes';
-// router.use('/servicos', servicosRouter);
 
 export default router;
