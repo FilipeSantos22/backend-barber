@@ -61,7 +61,7 @@ export const UsuariosController = {
         try {
             const id = Number(req.params.id);
             await UsuariosService.deletarPorId(id);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Usuário excluído com sucesso.' });
         } catch (err) {
             next(err);
         }
@@ -88,7 +88,7 @@ export const UsuariosController = {
             }
 
             await UsuariosService.atualizarSenha(idUsuario, senha);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Senha atualizada com sucesso.' });
         } catch (err) {
             next(err);
         }
