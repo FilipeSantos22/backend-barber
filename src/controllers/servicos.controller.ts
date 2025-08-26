@@ -59,7 +59,7 @@ export const ServicosController = {
             }
             const id = Number(raw);
             await ServicosService.remover(id);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Serviço excluído com sucesso.' });
         } catch (err) {
             next(err);
         }

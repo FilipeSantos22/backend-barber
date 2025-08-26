@@ -70,7 +70,7 @@ export const AgendamentosController = {
             }
             const id = Number(raw);
             await AgendamentosService.remover(id);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Agendamento excluído com sucesso.' });
         } catch (err) {
             next(err);
         }

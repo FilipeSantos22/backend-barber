@@ -59,7 +59,7 @@ export const BarbeariasController = {
         }
         const idBarbearia = Number(raw);
         await BarbeariasService.remover(idBarbearia);
-        res.sendStatus(204);
+        res.status(200).json({ message: 'Barbearia excluída com sucesso.' });
     } catch (err) {
         next(err);
     }

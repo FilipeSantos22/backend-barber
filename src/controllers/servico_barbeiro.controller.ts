@@ -45,7 +45,7 @@ export const ServicoBarbeiroController = {
             }
             const id = Number(raw);
             await ServicoBarbeiroService.removerPorBarbeiro(id);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Removido com sucesso.' });
         } catch (err) {
             next(err);
         }
@@ -59,7 +59,7 @@ export const ServicoBarbeiroController = {
             }
             const id = Number(raw);
             await ServicoBarbeiroService.removerPorServico(id);
-            res.sendStatus(204);
+            res.status(200).json({ message: 'Removido com sucesso.' });
         } catch (err) {
             next(err);
         }
