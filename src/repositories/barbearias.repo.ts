@@ -1,5 +1,6 @@
 import type { Barbearia } from '../models/barbearia';
 import db from '../database/knex';
+import type { Knex } from 'knex';
 
 export const BarbeariasRepo = {
     async findAll(): Promise<Barbearia[]> {
@@ -23,8 +24,9 @@ export const BarbeariasRepo = {
         return row;
     },
 
-    async deleteById(idBarbearia: number): Promise<void> {
-        await db('barbearia').where({ idBarbearia }).update({ excluido: true });
+    async deleteById(idBarbearia: number, trx?: Knex.Transaction): Promise<void> {
+        const q = trx ?? db;
+        await q('barbearia').where({ idBarbearia }).update({ excluido: true });
     },
 
     async findByName(nome: string): Promise<Barbearia | undefined> {

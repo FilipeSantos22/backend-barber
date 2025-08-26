@@ -1,5 +1,6 @@
 import type { Servico } from '../models/servico';
 import db from '../database/knex';
+import type { Knex } from 'knex';
 
 export const ServicosRepo = {
     async findAll(): Promise<Servico[]> {
@@ -11,7 +12,9 @@ export const ServicosRepo = {
     },
 
     async findByBarbearia(idBarbearia: number): Promise<Servico[]> {
-        return db<Servico>('servico').where({ idBarbearia, excluido: false }).select('*');
+        return db<Servico>('servico')
+            .where({ idBarbearia, excluido: false })
+            .select('*');
     },
 
     async create(payload: Partial<Servico>): Promise<Servico> {
@@ -27,7 +30,13 @@ export const ServicosRepo = {
         return row;
     },
 
-    async deleteById(id: number): Promise<void> {
-        await db('servico').where({ idServico: id }).update({ excluido: true });
+    async deleteById(id: number, trx?: Knex.Transaction): Promise<void> {
+        const q = trx ?? db;
+        await q('servico').where({ idServico: id }).update({ excluido: true });
+    },
+
+    async deleteByBarbearia(id: number, trx?: Knex.Transaction): Promise<void> {
+        const q = trx ?? db;
+        await q('servico').where({ idBarbearia: id }).update({ excluido: true });
     }
 };

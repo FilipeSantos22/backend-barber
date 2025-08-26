@@ -1,6 +1,8 @@
 import { ServicosRepo } from '../repositories/servicos.repo';
 import { HttpError } from '../utils/httpError';
 import type { Servico } from '../models/servico';
+import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
+import db from '../database/knex';
 
 export const ServicosService = {
     async listar(): Promise<Servico[]> {
@@ -37,6 +39,9 @@ export const ServicosService = {
         if (!exists) {
             throw new HttpError(404, 'serviço não encontrado');
         }
-        await ServicosRepo.deleteById(id);
-    }
+        await db.transaction(async (trx) => {
+            await ServicosRepo.deleteById(id, trx);
+            await ServicoBarbeiroRepo.removeRelationByServico(id, trx);
+        });
+    },
 };

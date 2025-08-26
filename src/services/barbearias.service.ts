@@ -1,6 +1,9 @@
 import { BarbeariasRepo } from '../repositories/barbearias.repo';
 import type { Barbearia } from '../models/barbearia';
 import { HttpError } from '../utils/httpError';
+import db from '../database/knex';
+import { ServicosRepo } from '../repositories/servicos.repo';
+import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
 
 export const BarbeariasService = {
     async listar(): Promise<Barbearia[]> {
@@ -39,6 +42,22 @@ export const BarbeariasService = {
         if (!row) {
             throw new HttpError(404, 'barbearia não encontrada');
         }
-        await BarbeariasRepo.deleteById(id);
+        await db.transaction(async (trx) => {
+            const barbearia = await BarbeariasRepo.findById(id);
+            await BarbeariasRepo.deleteById(id, trx);
+            if (barbearia) {
+                const servico = await ServicosRepo.findByBarbearia(barbearia.idBarbearia);
+                await ServicosRepo.deleteByBarbearia(barbearia.idBarbearia, trx);
+                
+                if (servico && Array.isArray(servico)) {
+                    for (const s of servico) {
+                        await ServicoBarbeiroRepo.removeRelationByServico(s.idServico, trx);
+                    }
+                } else if (servico) {
+                    const singleServico = servico as { idServico: number };
+                    await ServicoBarbeiroRepo.removeRelationByServico(singleServico.idServico, trx);
+                }
+            }
+        });
     }
 };

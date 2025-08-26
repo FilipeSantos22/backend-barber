@@ -1,5 +1,6 @@
 import type { Usuario } from '../models/usuario';
 import db from '../database/knex';
+import type { Knex } from 'knex';
 
 export const UsuariosRepo = {
     async findAll(): Promise<Usuario[]> {
@@ -20,9 +21,13 @@ export const UsuariosRepo = {
         return row;
     },
 
-    async deleteById(idUsuario: number) {
-        const row = await db<Usuario>('usuarios').where({ idUsuario, excluido: false }).update({ excluido: true });
-        return row;
+    async deleteById(idUsuario: number, trx?: Knex.Transaction) {
+        const q = trx ?? db;
+        return q('usuarios')
+            .where({ idUsuario })
+            .update({
+            excluido: true
+        });
     },
 
     async findByEmail(email: string) {

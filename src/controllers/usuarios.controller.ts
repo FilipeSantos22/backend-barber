@@ -59,9 +59,14 @@ export const UsuariosController = {
 
     async remover(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = Number(req.params.id);
-            await UsuariosService.deletarPorId(id);
-            res.status(200).json({ message: 'Usuário excluído com sucesso.' });
+            const raw = String(req.params.id ?? '');
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido. Deve conter apenas números.' });
+            }
+            const id = Number(raw);
+            await UsuariosService.remover(id);
+
+            return res.status(200).json({ message: 'Usuário excluído com sucesso.' });
         } catch (err) {
             next(err);
         }

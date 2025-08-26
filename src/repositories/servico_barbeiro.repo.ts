@@ -1,3 +1,4 @@
+import type { Knex } from 'knex';
 import db from '../database/knex';
 import type { Servico } from '../models/servico';
 
@@ -23,12 +24,14 @@ export const ServicoBarbeiroRepo = {
         });
     },
 
-    async removeRelationByBarber(idBarbeiro: number) {
-        return db('servico_barbeiro').where({ idBarbeiro }).update({ excluido: true });
+    async removeRelationByBarber(idBarbeiro: number, trx?: Knex.Transaction) {
+        const q = trx ?? db;
+        return q('servico_barbeiro').where({ idBarbeiro }).update({ excluido: true });
     },
 
-    async removeRelationByServico(idServico: number) {
-        return db('servico_barbeiro').where({ idServico }).update({ excluido: true });
+    async removeRelationByServico(idServico: number, trx?: Knex.Transaction) {
+        const q = trx ?? db;
+        return q('servico_barbeiro').where({ idServico }).update({ excluido: true });
     },
 
     async findAll(): Promise<any[]> {

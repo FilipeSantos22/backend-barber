@@ -1,7 +1,7 @@
 import { UsuariosRepo } from '../repositories/usuarios.repo';
 import { HttpError } from '../utils/httpError';
 import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
-import type { Servico } from '../models/servico';
+import db from '../database/knex';
 
 export const UsuariosService = {
 
@@ -30,8 +30,20 @@ export const UsuariosService = {
         return UsuariosRepo.findById(idUsuario);
     },
 
-    async deletarPorId(idUsuario: number) {
-        return UsuariosRepo.deleteById(idUsuario);
+    async remover(id: number): Promise<void> {
+        const usuario = await UsuariosRepo.findById(id);
+        if (!usuario) {
+            throw new HttpError(404, 'Usuário não encontrado');
+        }
+
+        if (usuario.excluido) {
+            throw new HttpError(404, 'Usuário já excluído');
+        }
+
+        await db.transaction(async (trx) => {
+            await UsuariosRepo.deleteById(id, trx);
+            await ServicoBarbeiroRepo.removeRelationByBarber(id, trx);
+        });
     },
 
     async buscarPorEmail(email: string) {
