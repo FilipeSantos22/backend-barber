@@ -99,4 +99,39 @@ export const UsuariosController = {
         }
     },
 
+    async listarAgendamentos(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id ?? '');
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const idUsuario = Number(raw);
+
+            const tipoUsuario = await UsuariosService.verTipoUsuario(idUsuario);
+            if (tipoUsuario !== 'barbeiro' && tipoUsuario !== 'cliente') {
+                return res.status(400).json({ error: 'Tipo de usuário inválido' });
+            }
+
+            if (req.path.includes('agendamentos-barbeiro') && tipoUsuario !== 'barbeiro') {
+                return res.status(400).json({ error: 'O usuário não é um barbeiro.' });
+            }
+
+            if (req.path.includes('agendamentos-cliente') && tipoUsuario !== 'cliente') {
+                return res.status(400).json({ error: 'O usuário não é um cliente.' });
+            }
+
+            const agendamentos = tipoUsuario === 'barbeiro'
+                ? await UsuariosService.listarAgendamentosBarbeiro(idUsuario)
+                : await UsuariosService.listarAgendamentosCliente(idUsuario);
+
+            if (Array.isArray(agendamentos) && agendamentos.length > 0) {
+                return res.json(agendamentos);
+            }
+
+            return res.status(404).json({ message: 'Nenhum agendamento encontrado para este usuário.' });
+        } catch (err) {
+            next(err);
+        }
+    },
+
 };

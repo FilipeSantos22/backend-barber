@@ -81,5 +81,30 @@ export const AgendamentosController = {
         status = status.toLowerCase();
         const allowedStatuses = ['pendente', 'confirmado', 'cancelado', 'finalizado'];
         return allowedStatuses.includes(status);
+    },
+
+    async atualizarStatus(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+
+            const id = Number(raw);
+            const { status } = req.body;
+            if (!status) {
+                return res.status(400).json({ error: 'Status é obrigatório' });
+            }
+            
+            const statusValido = await AgendamentosController.checkStatus(status);
+            if (!statusValido) {
+                return res.status(400).json({ error: 'Status inválido' });
+            }
+
+            const updated = await AgendamentosService.atualizarStatus(id, status);
+            res.json(updated);
+        } catch (err) {
+            next(err);
+        }
     }
 };

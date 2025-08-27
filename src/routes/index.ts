@@ -15,4 +15,9 @@ router.use('/agendamentos', agendamentosRouter);
 router.use('/servicos-barbeiro', servicosBarbeiroRouter);
 
 
+// Paginação, filtros e performance (recomendado)
+// Adicionar limit/offset, filtro por barbearia/servico/status e ordenação nas listagens.
+// Índices DB nas colunas usadas em WHERE (idBarbearia, idBarbeiro, excluido).
+
+
 export default router;

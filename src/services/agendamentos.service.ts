@@ -7,6 +7,15 @@ import { UsuariosRepo } from '../repositories/usuarios.repo';
 import { ServicosRepo } from '../repositories/servicos.repo';
 import { BarbeariasRepo } from '../repositories/barbearias.repo';
 
+const ALLOWED = ['pendente','confirmado','cancelado','finalizado'] as const;
+type StatusType = typeof ALLOWED[number];
+
+async function validarStatus(status: string): Promise<StatusType> {
+    const s = status.toLowerCase() as StatusType;
+    if (!ALLOWED.includes(s)) throw new HttpError(400, 'status inválido');
+    return s;
+}
+
 export const AgendamentosService = {
     async listar(): Promise<Agendamento[]> {
         return AgendamentosRepo.findAll();
@@ -86,5 +95,30 @@ export const AgendamentosService = {
             throw new HttpError(404, 'Agendamento não encontrado');
         }
         await AgendamentosRepo.deleteById(id);
-    }
+    },
+
+    async atualizarStatus(id: number, statusRaw: string, descricao?: string) {
+        const status = await validarStatus(statusRaw);
+
+        const ag = await AgendamentosRepo.findById(id);
+        if (!ag) throw new HttpError(404, 'Agendamento não encontrado');
+
+        // exigir motivo ao cancelar (opcional)
+        if (status === 'cancelado' && (!descricao || !String(descricao).trim())) {
+            throw new HttpError(400, 'motivo é obrigatório ao cancelar');
+        }
+
+        const payload: Partial<Agendamento> = {
+            status: status,
+            descricao: status === 'cancelado'
+                ? (descricao !== undefined ? descricao : ag.descricao ?? null)
+                : (ag.descricao ?? null),
+            data_atualizacao: new Date().toISOString()
+        };
+
+        const updated = await AgendamentosRepo.update(id, payload);
+        return updated as Agendamento;
+    },
+    
+
 };

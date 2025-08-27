@@ -14,6 +14,10 @@ export const AgendamentosRepo = {
         return db<Agendamento>('agendamento').where({ idUsuario, excluido: false }).select('*');
     },
 
+    async findByBarbeiro(idBarbeiro: number): Promise<Agendamento[]> {
+        return db<Agendamento>('agendamento').where({ idBarbeiro, excluido: false }).select('*');
+    },
+
     async findByBarbearia(idBarbearia: number): Promise<Agendamento[]> {
         return db<Agendamento>('agendamento').where({ idBarbearia, excluido: false }).select('*');
     },

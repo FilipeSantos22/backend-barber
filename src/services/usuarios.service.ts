@@ -2,6 +2,7 @@ import { UsuariosRepo } from '../repositories/usuarios.repo';
 import { HttpError } from '../utils/httpError';
 import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
 import db from '../database/knex';
+import { AgendamentosRepo } from '../repositories/agendamentos.repo';
 
 export const UsuariosService = {
 
@@ -58,4 +59,18 @@ export const UsuariosService = {
         return UsuariosRepo.updatePassword(id, newPassword);
     },
 
+    async listarAgendamentosBarbeiro(idBarbeiro: number) {
+        return AgendamentosRepo.findByBarbeiro(idBarbeiro);
+    },
+
+    async listarAgendamentosCliente(idCliente: number) {
+        return AgendamentosRepo.findByUsuario(idCliente);
+    },
+
+    async verTipoUsuario(id: number): Promise<string | null> {
+        const usuario = await UsuariosRepo.findById(id);
+        return usuario && usuario.tipo !== undefined ? usuario.tipo : null;
+    },
+
+    
 };
