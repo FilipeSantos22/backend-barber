@@ -15,7 +15,19 @@ export const UsuariosService = {
         if (!payload.email) {
             throw new Error('email obrigatório');
         }
-        return UsuariosRepo.create(payload);
+
+        const tipoUsuario = payload.tipo;
+        if (!tipoUsuario) {
+            throw new Error('Tipo de usuário inválido');
+        }
+
+        if (( tipoUsuario == 'admin' || tipoUsuario == 'barbeiro') && payload.idBarbearia) {
+            return UsuariosRepo.create(payload);
+        } else if (tipoUsuario == 'cliente') {
+            const { idBarbearia, ...novoPayload } = payload ?? {};
+            return UsuariosRepo.create(novoPayload);
+        }
+
     },
 
     async atualizar(id: number, payload: any) {

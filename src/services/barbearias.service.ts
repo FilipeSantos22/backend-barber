@@ -5,6 +5,7 @@ import db from '../database/knex';
 import { ServicosRepo } from '../repositories/servicos.repo';
 import { ServicoBarbeiroRepo } from '../repositories/servico_barbeiro.repo';
 import { AgendamentosRepo } from '../repositories/agendamentos.repo';
+import { UsuariosRepo } from '../repositories/usuarios.repo';
 
 export const BarbeariasService = {
     async listar(): Promise<Barbearia[]> {
@@ -73,5 +74,9 @@ export const BarbeariasService = {
     async atualizarAgendamento(idBarbearia: number, idAgendamento: number, payload: any): Promise<any> {
         // Lógica para atualizar o agendamento
         return AgendamentosRepo.update(idAgendamento, payload);
+    },
+
+    async listarBarbeiros(idBarbearia: number): Promise<any[]> {
+        return UsuariosRepo.findBarbeirosByBarbearia(idBarbearia);
     }
 };

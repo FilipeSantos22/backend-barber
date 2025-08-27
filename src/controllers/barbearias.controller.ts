@@ -111,6 +111,20 @@ export const BarbeariasController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    async listarBarbeiros(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const idBarbearia = Number(raw);
+            const barbeiros = await BarbeariasService.listarBarbeiros(idBarbearia);
+            res.json(barbeiros);
+        } catch (err) {
+            next(err);
+        }
     }
 
 };
