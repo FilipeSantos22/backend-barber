@@ -16,6 +16,7 @@ module.exports.up = async function (knex) {
     });
   }
 
+  const hasUpdated = await knex.schema.hasColumn('usuarios', 'data_atualizacao');
   if (!hasUpdated) {
     await knex.schema.alterTable('usuarios', (table) => {
       table.timestamp('data_atualizacao').nullable().defaultTo(knex.fn.now());
