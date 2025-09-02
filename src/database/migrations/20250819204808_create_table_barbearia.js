@@ -8,7 +8,6 @@ exports.up = function(knex) {
     table.string('nome', 255).notNullable();
     table.string('endereco', 255);
     table.string('telefone', 20);
-    table.string('imagem_url', 2048);
     table.timestamp('data_criacao').notNullable().defaultTo(knex.fn.now());
     table.timestamp('data_atualizacao').notNullable().defaultTo(knex.fn.now());
   });
