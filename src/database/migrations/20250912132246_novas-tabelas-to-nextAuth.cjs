@@ -1,9 +1,9 @@
 exports.up = async function(knex) {
   // Adiciona colunas que faltam na tabela usuarios
-  const hasEmailVerificado = await knex.schema.hasColumn('usuarios', 'emailVerificado');
-  if (!hasEmailVerificado) {
+  const hasEmailVerified = await knex.schema.hasColumn('usuarios', 'emailVerified');
+  if (!hasEmailVerified) {
     await knex.schema.alterTable('usuarios', table => {
-        table.timestamp('emailVerificado').nullable();
+        table.timestamp('emailVerified').nullable();
     });
   }
   const hasImage = await knex.schema.hasColumn('usuarios', 'image');
@@ -76,7 +76,7 @@ exports.down = async function(knex) {
   await knex.schema.dropTableIfExists('accounts');
 
   // Remover colunas adicionadas em usuarios
-  const colunas = ['emailVerificado', 'image'];
+  const colunas = ['emailVerified', 'image'];
   for (const coluna of colunas) {
     const hasCol = await knex.schema.hasColumn('usuarios', coluna);
     if (hasCol) {
