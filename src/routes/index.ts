@@ -4,6 +4,9 @@ import barbeariasRouter from './barbearias.routes';
 import servicosRouter from './servicos.routes';
 import agendamentosRouter from './agendamentos.routes';
 import servicosBarbeiroRouter from './servico_barbeiro.routes';
+import accountsRouter from './accounts.routes';
+import sessionsRouter from './sessions.routes';
+import verificationTokensRouter from './verification_tokens.routes';
 
 const router = Router();
 
@@ -13,6 +16,9 @@ router.use('/barbearias', barbeariasRouter);
 router.use('/servicos', servicosRouter);
 router.use('/agendamentos', agendamentosRouter);
 router.use('/servicos-barbeiro', servicosBarbeiroRouter);
+router.use('/accounts', accountsRouter);
+router.use('/sessions', sessionsRouter);
+router.use('/verification_tokens', verificationTokensRouter);
 
 
 // Paginação, filtros e performance (recomendado)
