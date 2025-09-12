@@ -61,4 +61,18 @@ export const VerificationTokensController = {
             next(error);
         }
     },
+
+    useVerificationToken: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { identifier, token } = req.body;
+            if (!identifier || !token) {
+                res.status(400).json({ message: 'identifier and token are required' });
+                return;
+            }
+            const result = await VerificationTokensService.useVerificationToken(identifier, token);
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

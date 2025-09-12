@@ -20,14 +20,14 @@ export const SessionsController = {
         }
     },
 
-    getSessionById: async (req: Request, res: Response, next: NextFunction) => {
+    getSessionByToken: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
-            if (!id) {
-                res.status(400).json({ message: 'id is required' });
+            const { token } = req.params;
+            if (!token) {
+                res.status(400).json({ message: 'token is required' });
                 return;
             }
-            const session = await SessionsService.getSessionById(id);
+            const session = await SessionsService.getSessionByToken(token);
             res.status(200).json(session);
         } catch (error) {
             next(error);

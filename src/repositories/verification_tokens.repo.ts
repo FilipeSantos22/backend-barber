@@ -23,4 +23,11 @@ export const VerificationTokensRepo = {
     delete: async (id: string) => {
         await db('verification_tokens').delete().where({ id });
     },
+
+    findByIdentifierAndToken: async (identifier: string, token: string) => {
+        return db('verification_tokens')
+            .select('*')
+            .where({ identifier, token })
+            .first();
+    }
 };

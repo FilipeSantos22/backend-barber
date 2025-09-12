@@ -6,9 +6,9 @@ const router = Router();
 
 router.post('/', asyncHandler(SessionsController.createSession));
 router.get('/', asyncHandler(SessionsController.getSessions));
-router.get('/:id', asyncHandler(SessionsController.getSessionById));
-router.put('/:id', asyncHandler(SessionsController.updateSession));
-router.delete('/:id', asyncHandler(SessionsController.deleteSession));
+router.get('/:token', asyncHandler(SessionsController.getSessionByToken));
+router.put('/:token', asyncHandler(SessionsController.updateSession));
+router.delete('/:token', asyncHandler(SessionsController.deleteSession));
 
 export default router;
 // UX/API extras úteis para o frontend (opcionais, muito úteis)

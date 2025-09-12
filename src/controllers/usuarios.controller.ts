@@ -2,13 +2,19 @@ import type { Request, Response, NextFunction } from 'express';
 import { UsuariosService } from '../services/usuarios.service';
 
 export const UsuariosController = {
-    async listar(_req: Request, res: Response, next: NextFunction) {
-        try {
-            const data = await UsuariosService.listarTodos();
-            res.json(data);
-        } catch (err) {
-            next(err);
+    async listar(req: Request, res: Response) {
+        const { email } = req.query;
+        if (email) {
+            // Buscar por email
+            const usuario = await UsuariosService.buscarPorEmail(email as string);
+            if (!usuario) {
+                return res.status(404).json({ message: "Usuário não encontrado" });
+            }
+            return res.json(usuario);
         }
+        // Listar todos
+        const usuarios = await UsuariosService.listarTodos();
+        return res.json(usuarios);
     },
 
     async criar(req: Request, res: Response, next: NextFunction) {
@@ -134,4 +140,21 @@ export const UsuariosController = {
         }
     },
 
-};
+    async buscarPorEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const email = String(req.query.email ?? '').trim();
+            if (!email) {
+                return res.status(400).json({ error: 'Email é obrigatório.' });
+            }
+
+            const user = await UsuariosService.buscarPorEmail(email);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado.' });
+            }
+
+            res.json(user);
+        } catch (err) {
+            next(err);
+        }
+    },
+}

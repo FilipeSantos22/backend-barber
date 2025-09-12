@@ -11,17 +11,17 @@ export const SessionsRepo = {
         return db('sessions').select('*');
     },
 
-    findById: async (id: string) => {
-        return db('sessions').select('*').where({ id }).first();
+    findByToken: async (token: string) => {
+        return db('sessions').select('*').where({ token }).first();
     },
 
-    update: async (id: string, data: Partial<Session>) => {
-        await db('sessions').update(data).where({ id });
-        return SessionsRepo.findById(id);
+    update: async (token: string, data: Partial<Session>) => {
+        await db('sessions').update(data).where({ token });
+        return SessionsRepo.findByToken(token);
     },
 
-    delete: async (id: string) => {
-        const result = await db('sessions').delete().where({ id });
+    delete: async (token: string) => {
+        const result = await db('sessions').delete().where({ token });
         return result > 0;
     },
 };

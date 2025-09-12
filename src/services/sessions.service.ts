@@ -22,9 +22,9 @@ export const SessionsService = {
         }
     },
 
-    getSessionById: async (id: string) => {
+    getSessionByToken: async (token: string) => {
         try {
-            const session = await SessionsRepo.findById(id);
+            const session = await SessionsRepo.findByToken(token);
             if (!session) throw new HttpError(404, 'Session not found');
             return session;
         } catch (error) {

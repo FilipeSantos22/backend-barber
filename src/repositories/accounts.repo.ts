@@ -29,4 +29,11 @@ export const AccountsRepo = {
         const count = await db<Account>('accounts').where('id', id).delete();
         return count > 0;
     },
+
+    async findByProvider(provider: string, providerAccountId: string): Promise<Account | null> {
+        const [row] = await db<Account>('accounts')
+            .where({ provider, providerAccountId })
+            .select('*');
+        return row || null;
+    }
 };

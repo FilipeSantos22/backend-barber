@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { AccountsService } from '../services/Accounts.service';
+import { AccountsService } from '../services/accounts.service';
 
 export const AccountsController = {
     createAccount: async (req: Request, res: Response, next: NextFunction) => {
@@ -12,28 +12,39 @@ export const AccountsController = {
     },
 
     getAccounts: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const accounts = await AccountsService.getAccounts();
-        res.status(200).json(accounts);
-    } catch (error) {
-        next(error);
-    }
+        try {
+            const { provider, providerAccountId } = req.query;
+            if (provider && providerAccountId) {
+                // Buscar conta específica
+                const account = await AccountsService.getByProviderAndAccountId(
+                    provider as string,
+                    providerAccountId as string
+                );
+                if (!account) return res.status(404).json({ message: 'Conta não encontrada' });
+                return res.json(account);
+            }
+            // Listar todas as contas (opcional)
+            const accounts = await AccountsService.getAccounts();
+            return res.json(accounts);
+        } catch (error) {
+            next(error);
+        }
     },
 
     getAccountById: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-            const { id } = req.params;
-            if (!id) {
-                return res.status(400).json({ message: 'Missing account id' });
-            }
-            const account = await AccountsService.getAccountById(id);
-            if (!account) {
-                return res.status(404).json({ message: 'Account not found' });
-            }
-            res.status(200).json(account);
-    } catch (error) {
-        next(error);
-    }
+        try {
+                const { id } = req.params;
+                if (!id) {
+                    return res.status(400).json({ message: 'Missing account id' });
+                }
+                const account = await AccountsService.getAccountById(id);
+                if (!account) {
+                    return res.status(404).json({ message: 'Account not found' });
+                }
+                res.status(200).json(account);
+        } catch (error) {
+            next(error);
+        }
     },
 
     updateAccount: async (req: Request, res: Response, next: NextFunction) => {
@@ -53,18 +64,41 @@ export const AccountsController = {
     },
 
     deleteAccount: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-            const { id } = req.params;
-            if (!id) {
-                return res.status(400).json({ message: 'Missing account id' });
+        try {
+                const { id } = req.params;
+                if (!id) {
+                    return res.status(400).json({ message: 'Missing account id' });
+                }
+                const success = await AccountsService.deleteAccount(id);
+                if (!success) {
+                    return res.status(404).json({ message: 'Account not found' });
+                }
+                res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getAccountByProvider: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { provider, providerAccountId } = req.query;
+            if (!provider || !providerAccountId) {
+                return res.status(400).json({ message: 'Missing provider or providerAccountId' });
             }
-            const success = await AccountsService.deleteAccount(id);
-            if (!success) {
+            if (typeof provider !== 'string' || typeof providerAccountId !== 'string') {
+                return res.status(400).json({ message: 'provider and providerAccountId must be strings' });
+            }
+            if ((provider && !providerAccountId) || (!provider && providerAccountId)) {
+                return res.status(400).json({ message: 'provider e providerAccountId devem ser enviados juntos' });
+            }
+            const account = await AccountsService.getByProviderAndAccountId(provider, providerAccountId);
+            if (!account) {
                 return res.status(404).json({ message: 'Account not found' });
             }
-            res.status(204).send();
-    } catch (error) {
-        next(error);
-    }
+            res.status(200).json(account);
+        } catch (error) {
+            next(error);
+        }
     },
+
 };

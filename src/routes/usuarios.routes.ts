@@ -12,6 +12,7 @@ router.get('/', asyncHandler(UsuariosController.listar));
 router.get('/:id/agendamentos-barbeiro', asyncHandler(UsuariosController.listarAgendamentos));
 router.get('/:id/agendamentos-cliente', asyncHandler(UsuariosController.listarAgendamentos));
 router.get('/:id', asyncHandler(UsuariosController.buscarPorId));
+// router.get('/', asyncHandler(UsuariosController.buscarPorEmail));
 
 router.post('/', asyncHandler(UsuariosController.criar));
 router.put('/:id', asyncHandler(UsuariosController.atualizar));

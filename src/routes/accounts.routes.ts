@@ -7,6 +7,7 @@ const router = Router();
 router.post('/', asyncHandler(AccountsController.createAccount));
 router.get('/', asyncHandler(AccountsController.getAccounts));
 router.get('/:id', asyncHandler(AccountsController.getAccountById));
+// GET    /accounts?provider=...&providerAccountId=... — buscar conta
 router.put('/:id', asyncHandler(AccountsController.updateAccount));
 router.delete('/:id', asyncHandler(AccountsController.deleteAccount));
 

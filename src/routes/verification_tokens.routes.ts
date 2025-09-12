@@ -9,5 +9,6 @@ router.get('/', asyncHandler(VerificationTokensController.getVerificationTokens)
 router.get('/:id', asyncHandler(VerificationTokensController.getVerificationTokenById));
 router.put('/:id', asyncHandler(VerificationTokensController.updateVerificationToken));
 router.delete('/:id', asyncHandler(VerificationTokensController.deleteVerificationToken));
+router.post('/use', asyncHandler(VerificationTokensController.useVerificationToken));
 
 export default router;

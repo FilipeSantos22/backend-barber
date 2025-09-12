@@ -55,4 +55,15 @@ export const VerificationTokensService = {
             throw new HttpError(500, 'Error deleting verification token');
         }
     },
+    useVerificationToken: async (identifier: string, token: string) => {
+        try {
+            const vt = await VerificationTokensRepo.findByIdentifierAndToken(identifier, token);
+            if (!vt) {
+                throw new HttpError(404, 'Verification token not found');
+            }
+            return vt;
+        } catch (error) {
+            throw new HttpError(500, 'Error using verification token');
+        }
+    },
 };
