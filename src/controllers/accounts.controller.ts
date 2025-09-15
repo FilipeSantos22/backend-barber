@@ -1,14 +1,15 @@
 import type { Request, Response, NextFunction } from 'express';
 import { AccountsService } from '../services/accounts.service';
+import { UsuariosService } from '../services/usuarios.service';
 
 export const AccountsController = {
     createAccount: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const account = await AccountsService.createAccount(req.body);
-        res.status(201).json(account);
-    } catch (error) {
-        next(error);
-    }
+        try {
+            const account = await AccountsService.createAccount(req.body);
+            res.status(201).json(account);
+        } catch (error) {
+            next(error);
+        }
     },
 
     getAccounts: async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +22,19 @@ export const AccountsController = {
                     providerAccountId as string
                 );
                 if (!account) return res.status(404).json({ message: 'Conta não encontrada' });
-                return res.json(account);
+
+                // Buscar usuário relacionado à conta
+                const userId = (account as any).idUsuario ?? (account as any).userId ?? (account as any).user_id;
+                if (!userId) {
+                    return res.status(404).json({ message: 'Usuário não encontrado' });
+                }
+                const usuario = await UsuariosService.buscarPorId(userId);
+                if (!usuario) {
+                    return res.status(404).json({ message: 'Usuário não encontrado' });
+                }
+
+                // Retornar no formato esperado pelo NextAuth Adapter
+                return res.json({ user: usuario });
             }
             // Listar todas as contas (opcional)
             const accounts = await AccountsService.getAccounts();
