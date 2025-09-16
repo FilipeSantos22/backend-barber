@@ -32,7 +32,7 @@ export const UsuariosController = {
             const { senha, ...publicUser } = created;
 
             res.status(201)
-            .location(`/api/usuarios/${publicUser.idUsuario}`)
+            .location(`/api/usuarios/${publicUser.id}`)
             .json(publicUser);
         } catch (err) {
             next(err);
@@ -45,8 +45,8 @@ export const UsuariosController = {
             if (!/^\d+$/.test(raw)) {
                 return res.status(400).json({ error: 'id inválido. Deve conter apenas números.' });
             }
-            const idUsuario = Number(req.params.id);
-            const user = await UsuariosService.buscarPorId(idUsuario);
+            const id = Number(req.params.id);
+            const user = await UsuariosService.buscarPorId(id);
             res.json(user);
         } catch (err) {
             next(err);
@@ -85,10 +85,10 @@ export const UsuariosController = {
 
     async mudarSenha(req: Request, res: Response, next: NextFunction) {
         try {
-            const idUsuario = Number(req.params.id);
+            const id = Number(req.params.id);
             const { senhaAntiga, senha } = req.body;
 
-            const user = await UsuariosService.buscarPorId(idUsuario);
+            const user = await UsuariosService.buscarPorId(id);
             if (!user) {
                 return res.status(404).json({ error: 'Usuário não encontrado.' });
             }
@@ -98,7 +98,7 @@ export const UsuariosController = {
                 return res.status(401).json({ error: 'Senha antiga não confere.' });
             }
 
-            await UsuariosService.atualizarSenha(idUsuario, senha);
+            await UsuariosService.atualizarSenha(id, senha);
             res.status(200).json({ message: 'Senha atualizada com sucesso.' });
         } catch (err) {
             next(err);
@@ -111,9 +111,9 @@ export const UsuariosController = {
             if (!/^\d+$/.test(raw)) {
                 return res.status(400).json({ error: 'id inválido' });
             }
-            const idUsuario = Number(raw);
+            const id = Number(raw);
 
-            const tipoUsuario = await UsuariosService.verTipoUsuario(idUsuario);
+            const tipoUsuario = await UsuariosService.verTipoUsuario(id);
             if (tipoUsuario !== 'barbeiro' && tipoUsuario !== 'cliente') {
                 return res.status(400).json({ error: 'Tipo de usuário inválido' });
             }
@@ -127,8 +127,8 @@ export const UsuariosController = {
             }
 
             const agendamentos = tipoUsuario === 'barbeiro'
-                ? await UsuariosService.listarAgendamentosBarbeiro(idUsuario)
-                : await UsuariosService.listarAgendamentosCliente(idUsuario);
+                ? await UsuariosService.listarAgendamentosBarbeiro(id)
+                : await UsuariosService.listarAgendamentosCliente(id);
 
             if (Array.isArray(agendamentos) && agendamentos.length > 0) {
                 return res.json(agendamentos);

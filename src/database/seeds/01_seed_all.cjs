@@ -1,5 +1,5 @@
 /**
- * Seed que popula tabelas de teste (barbearia, usuarios, servico, servico_barbeiro, agendamento).
+ * Seed que popula tabelas de teste (barbearia, users, servico, servico_barbeiro, agendamento).
  * Execute:
  * npx knex seed:run --knexfile ./knexfile.cjs
  */
@@ -39,21 +39,21 @@ module.exports.seed = async function(knex) {
       { nome: 'Cliente One', email: 'cliente1@barber.com', telefone: '(11) 5000-0000', tipo: 'cliente' }
     ];
 
-    const usuariosExists = await trx.schema.hasTable('usuarios');
+    const usuariosExists = await trx.schema.hasTable('users');
     let usuarios = [];
     let usuarioIdKey = null;
 
     if (usuariosExists) {
       try {
-        usuarios = await trx('usuarios').insert(usuariosSeed).returning('*');
+        usuarios = await trx('users').insert(usuariosSeed).returning('*');
       } catch (e) {
-        await trx('usuarios').insert(usuariosSeed);
-        usuarios = await trx('usuarios').whereIn('email', usuariosSeed.map(u => u.email)).select('*');
+        await trx('users').insert(usuariosSeed);
+        usuarios = await trx('users').whereIn('email', usuariosSeed.map(u => u.email)).select('*');
       }
       if (usuarios.length > 0) {
         const sample = usuarios[0];
-        // espera-se idUsuario como PK, mas detecta variações
-        usuarioIdKey = Object.keys(sample).find(k => /^idusuario$|^id$/i.test(k));
+        // espera-se id como PK, mas detecta variações
+        usuarioIdKey = Object.keys(sample).find(k => /^id$|^id$/i.test(k));
       }
     }
 
@@ -116,7 +116,7 @@ module.exports.seed = async function(knex) {
       // detecta nomes das colunas existentes na tabela agendamento
       const cols = await trx('agendamento').columnInfo();
 
-      if (cols['idUsuario']) agInsert['idUsuario'] = cliente[usuarioIdKey];
+      if (cols['id']) agInsert['id'] = cliente[usuarioIdKey];
       else if (cols['id_usuario']) agInsert['id_usuario'] = cliente[usuarioIdKey];
 
       if (cols['idBarbeiro']) agInsert['idBarbeiro'] = barbeiro[usuarioIdKey];
@@ -138,14 +138,14 @@ module.exports.seed = async function(knex) {
       if (cols['descricao']) agInsert['descricao'] = 'Agendamento de teste via seed';
 
       // insere apenas se conseguiu mapear as chaves importantes
-      const required = ['idUsuario','idBarbeiro','idServico','idBarbearia'];
+      const required = ['id','idBarbeiro','idServico','idBarbearia'];
       const mapped = Object.keys(agInsert).map(k => k.toLowerCase());
       const hasRequired = required.every(r => mapped.includes(r.toLowerCase()));
       if (hasRequired) {
         // evita duplicação buscando por combinação
         const exists = await trx('agendamento').where({
           // ajusta para os nomes reais presentes no agInsert
-          ...(agInsert.idUsuario ? { idUsuario: agInsert.idUsuario } : {}),
+          ...(agInsert.id ? { id: agInsert.id } : {}),
           ...(agInsert.idBarbeiro ? { idBarbeiro: agInsert.idBarbeiro } : {}),
           ...(agInsert.idServico ? { idServico: agInsert.idServico } : {}),
           ...(agInsert.idBarbearia ? { idBarbearia: agInsert.idBarbearia } : {})

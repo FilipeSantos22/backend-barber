@@ -6,8 +6,8 @@ exports.up = async function(knex) {
 
   await knex.schema.createTable('agendamento', function(table) {
     table.increments('idAgendamento').primary();
-    table.integer('idUsuario').notNullable().references('idUsuario').inTable('usuarios');
-    table.integer('idBarbeiro').notNullable().references('idUsuario').inTable('usuarios');
+    table.integer('id').notNullable().references('id').inTable('users'); // alterei de 'usuarios' para 'users' - 16/09/25
+    table.integer('idBarbeiro').notNullable().references('id').inTable('users');
     table.integer('idServico').notNullable().references('idServico').inTable('servico');
     table.integer('idBarbearia').notNullable().references('idBarbearia').inTable('barbearia');
     table.timestamp('data_hora').notNullable();

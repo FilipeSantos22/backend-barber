@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 exports.up = async function(knex) {
-  // Cria a tabela usuarios
-  await knex.schema.createTable('usuarios', function(table) {
-    table.increments('idUsuario').primary();
+  // Cria a tabela users
+  await knex.schema.createTable('users', function(table) { // alterei o nome para 'users' - 16/09/25
+    table.increments('id').primary();
     table.string('nome', 255);
     table.string('email', 255).unique();
     table.string('telefone', 20);
@@ -20,5 +20,5 @@ exports.up = async function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = async function(knex) {
-  await knex.schema.dropTableIfExists('usuarios');
+  await knex.schema.dropTableIfExists('users'); // alterei o nome para 'users' - 16/09/25
 };

@@ -4,34 +4,34 @@ import type { Knex } from 'knex';
 
 export const UsuariosRepo = {
     async findAll(): Promise<Usuario[]> {
-        return db<Usuario>('usuarios').select('*').where({ excluido: false });
+        return db<Usuario>('users').select('*').where({ excluido: false });
     },
 
-    async findById(idUsuario: number) {
-        return db<Usuario>('usuarios').where({ idUsuario, excluido: false }).first();
+    async findById(id: number) {
+        return db<Usuario>('users').where({ id, excluido: false }).first();
     },
 
     async create(payload: Partial<Usuario>) {
-        const [row] = await db<Usuario>('usuarios').insert(payload).returning('*');
+        const [row] = await db<Usuario>('users').insert(payload).returning('*');
         return row;
     },
 
-    async update(idUsuario: number, payload: Partial<Usuario>) {
-        const [row] = await db<Usuario>('usuarios').where({ idUsuario, excluido: false }).update(payload).returning('*');
+    async update(id: number, payload: Partial<Usuario>) {
+        const [row] = await db<Usuario>('users').where({ id, excluido: false }).update(payload).returning('*');
         return row;
     },
 
-    async deleteById(idUsuario: number, trx?: Knex.Transaction) {
+    async deleteById(id: number, trx?: Knex.Transaction) {
         const q = trx ?? db;
-        return q('usuarios')
-            .where({ idUsuario })
+        return q('users')
+            .where({ id })
             .update({
             excluido: true
         });
     },
 
     async findByEmail(email: string) {
-        return db<Usuario>('usuarios').where({ email, excluido: false }).first();
+        return db<Usuario>('users').where({ email, excluido: false }).first();
     },
 
     // --- métodos simplificados sem bcrypt ---
@@ -42,11 +42,11 @@ export const UsuariosRepo = {
     },
 
     // atualiza a senha diretamente (texto plano)
-    async updatePassword(idUsuario: number, newPassword: string): Promise<void> {
-        await db<Usuario>('usuarios').where({ idUsuario }).update({ senha: newPassword });
+    async updatePassword(id: number, newPassword: string): Promise<void> {
+        await db<Usuario>('users').where({ id }).update({ senha: newPassword });
     },
 
     async findBarbeirosByBarbearia(idBarbearia: number): Promise<Usuario[]> {
-        return db<Usuario>('usuarios').where({ idBarbearia, excluido: false });
+        return db<Usuario>('users').where({ idBarbearia, excluido: false });
     }
 };

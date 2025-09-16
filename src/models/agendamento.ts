@@ -1,6 +1,6 @@
 export type Agendamento = {
     idAgendamento?: number;
-    idUsuario: number;
+    id: number;
     idBarbeiro: number;
     idServico: number;
     idBarbearia: number;

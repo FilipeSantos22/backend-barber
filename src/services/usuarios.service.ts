@@ -39,8 +39,8 @@ export const UsuariosService = {
         return UsuariosRepo.update(id, payload);
     },
 
-    async buscarPorId(idUsuario: number) {
-        return UsuariosRepo.findById(idUsuario);
+    async buscarPorId(id: number) {
+        return UsuariosRepo.findById(id);
     },
 
     async remover(id: number): Promise<void> {

@@ -28,8 +28,8 @@ export const AgendamentosService = {
 
     async criar(payload: Partial<Agendamento>): Promise<Agendamento> {
         // validações básicas
-        if (!payload.idUsuario || !payload.idServico || !payload.idBarbearia || !payload.data_hora) {
-            throw new HttpError(400, 'idUsuario, idServico, idBarbearia e data_hora são obrigatórios');
+        if (!payload.id || !payload.idServico || !payload.idBarbearia || !payload.data_hora) {
+            throw new HttpError(400, 'id, idServico, idBarbearia e data_hora são obrigatórios');
         }
 
         // validar formato da data
@@ -38,7 +38,7 @@ export const AgendamentosService = {
         }
 
         // checar existência de referências (opcional, mas recomendado)
-        const usuario = await UsuariosRepo.findById(payload.idUsuario);
+        const usuario = await UsuariosRepo.findById(payload.id);
         if (!usuario) {
             throw new HttpError(404, 'Usuário não encontrado');
         }
@@ -55,8 +55,8 @@ export const AgendamentosService = {
 
         // criar
         return AgendamentosRepo.create({
-            idUsuario: payload.idUsuario,
-            idBarbeiro: payload.idBarbeiro ?? payload.idUsuario, // se não informar, pode usar idUsuario (ajuste se necessário)
+            id: payload.id,
+            idBarbeiro: payload.idBarbeiro ?? payload.id, // se não informar, pode usar id (ajuste se necessário)
             idServico: payload.idServico,
             idBarbearia: payload.idBarbearia,
             data_hora: payload.data_hora,

@@ -8,7 +8,7 @@ exports.up = function(knex) {
       .references('idServico').inTable('servico')
       .onDelete('CASCADE');
     table.integer('idBarbeiro').notNullable()
-      .references('idUsuario').inTable('usuarios')
+      .references('id').inTable('users') // alterei de 'usuarios' para 'users' - 16/09/25
       .onDelete('CASCADE');
     table.primary(['idServico', 'idBarbeiro']);
   });

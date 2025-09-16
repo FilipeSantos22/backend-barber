@@ -34,8 +34,8 @@ export const ServicoBarbeiroService = {
         await ServicoBarbeiroRepo.addRelation(idServico, idBarbeiro);
     },
 
-    async listarServicosDoBarbeiro(idUsuario: number): Promise<Servico[]> {
-        const usuario = await UsuariosRepo.findById(idUsuario);
+    async listarServicosDoBarbeiro(id: number): Promise<Servico[]> {
+        const usuario = await UsuariosRepo.findById(id);
         if (!usuario) {
             throw new HttpError(404, 'Barbeiro não encontrado');
         }
@@ -43,7 +43,7 @@ export const ServicoBarbeiroService = {
         if (usuario.tipo !== 'barbeiro' && usuario.tipo !== 'admin') {
             throw new HttpError(400, 'Usuário não é barbeiro');
         }
-        let servicos = await ServicoBarbeiroRepo.findByBarbeiroId(idUsuario);
+        let servicos = await ServicoBarbeiroRepo.findByBarbeiroId(id);
 
         return servicos;
     },

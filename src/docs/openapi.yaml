@@ -16,7 +16,7 @@ components:
     Usuario:
       type: object
       properties:
-        idUsuario:
+        id:
           type: integer
         nome:
           type: string
@@ -92,7 +92,7 @@ components:
       properties:
         idAgendamento:
           type: integer
-        idUsuario:
+        id:
           type: integer
         idBarbeiro:
           type: integer
@@ -111,7 +111,7 @@ components:
         data_criacao:
           type: string
           format: date-time
-      required: [idUsuario, idBarbeiro, idServico, idBarbearia, data_hora]
+      required: [id, idBarbeiro, idServico, idBarbearia, data_hora]
 paths:
   /api/usuarios:
     get:
@@ -136,9 +136,9 @@ paths:
       responses:
         "201":
           description: Usuário criado
-  /api/usuarios/{idUsuario}:
+  /api/usuarios/{id}:
     parameters:
-      - name: idUsuario
+      - name: id
         in: path
         required: true
         schema:

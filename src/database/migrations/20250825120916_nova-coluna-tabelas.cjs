@@ -1,6 +1,6 @@
 
 exports.up = async function(knex) {
-  await knex.schema.alterTable("usuarios", (table) => {
+  await knex.schema.alterTable("users", (table) => {
     table.boolean("excluido").defaultTo(false);
   });
 
@@ -22,7 +22,7 @@ exports.up = async function(knex) {
 };
 
 exports.down = async function(knex) {
-  await knex.schema.alterTable("usuarios", (table) => {
+  await knex.schema.alterTable("users", (table) => {
     table.dropColumn("excluido");
   });
 
