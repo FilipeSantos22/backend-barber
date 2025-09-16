@@ -5,6 +5,7 @@ import { UsuariosService } from '../services/usuarios.service';
 export const AccountsController = {
     createAccount: async (req: Request, res: Response, next: NextFunction) => {
         try {
+            req.body.userId = Number(req.body.userId);
             const account = await AccountsService.createAccount(req.body);
             res.status(201).json(account);
         } catch (error) {

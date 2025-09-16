@@ -1,6 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
 import { UsuariosService } from '../services/usuarios.service';
 
+function mapUserToAdapterUser(user: any) {
+    return {
+        id: String(user.id), // sempre como string!
+        email: user.email,
+        emailVerified: user.emailverified ?? null,
+        name: user.name ?? "",
+        image: user.image ?? "",
+        // outros campos se quiser
+    };
+}
+
 export const UsuariosController = {
     async listar(req: Request, res: Response) {
         const { email } = req.query;
@@ -8,9 +19,9 @@ export const UsuariosController = {
             // Buscar por email
             const usuario = await UsuariosService.buscarPorEmail(email as string);
             if (!usuario) {
-                return res.status(404).json({ message: "Usuário não encontrado" });
+                return res.status(200).json(usuario ?? []);
             }
-            return res.json(usuario);
+            return res.json(mapUserToAdapterUser(usuario));
         }
         // Listar todos
         const usuarios = await UsuariosService.listarTodos();
@@ -19,12 +30,16 @@ export const UsuariosController = {
 
     async criar(req: Request, res: Response, next: NextFunction) {
         try {
-
             const emailExists = await UsuariosController.checarEmailExiste(req.body.email);
             if (emailExists) {
-                return res.status(400).json({ error: 'Email ' + req.body.email + ' já cadastrado.' });
+                const usuario = await UsuariosService.buscarPorEmail(req.body.email);
+                return res.status(200).json(mapUserToAdapterUser(usuario));
             }
 
+            // Gera uma senha aleatória caso não exista (para usuários OAuth)
+            if (!req.body.senha) {
+                req.body.senha = Math.random().toString(36).slice(-10);
+            }
             const created = await UsuariosService.criar(req.body);
             if (!created) {
                 return res.status(500).json({ error: 'Erro ao criar usuário.' });
@@ -33,7 +48,7 @@ export const UsuariosController = {
 
             res.status(201)
             .location(`/api/usuarios/${publicUser.id}`)
-            .json(publicUser);
+            .json(mapUserToAdapterUser(publicUser));
         } catch (err) {
             next(err);
         }
@@ -47,7 +62,7 @@ export const UsuariosController = {
             }
             const id = Number(req.params.id);
             const user = await UsuariosService.buscarPorId(id);
-            res.json(user);
+            res.json(mapUserToAdapterUser(user));
         } catch (err) {
             next(err);
         }
@@ -149,7 +164,7 @@ export const UsuariosController = {
 
             const user = await UsuariosService.buscarPorEmail(email);
             if (!user) {
-                return res.status(404).json({ error: 'Usuário não encontrado.' });
+                return res.status(200).json(user ?? []);
             }
 
             res.json(user);

@@ -6,7 +6,7 @@ export const AccountsRepo = {
         const [row] = await db<Account>('accounts').insert(payload).returning('*');
 
         if (!row) {
-            throw new Error('Erro ao criar novo agendamento');
+            throw new Error('Erro ao criar novo account');
         }
         return row;
     },

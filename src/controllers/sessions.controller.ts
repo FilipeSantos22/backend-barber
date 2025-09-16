@@ -14,7 +14,11 @@ export const SessionsController = {
     getSessions: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const sessions = await SessionsService.getSessions();
-            res.status(200).json(sessions);
+            const formattedSessions = sessions.map(session => ({
+                ...session,
+                expires: session.expires ? new Date(session.expires).toISOString() : session.expires,
+            }));
+            res.status(200).json(formattedSessions);
         } catch (error) {
             next(error);
         }
@@ -28,6 +32,12 @@ export const SessionsController = {
                 return;
             }
             const session = await SessionsService.getSessionByToken(token);
+            if (!session) {
+                return res.status(404).json({ message: "Sessão não encontrada" });
+            }
+            if (session && session.expires) {
+                session.expires = new Date(session.expires).toISOString();
+            }
             res.status(200).json(session);
         } catch (error) {
             next(error);

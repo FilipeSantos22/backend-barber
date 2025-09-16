@@ -3,25 +3,25 @@ import type { Session } from '../models/session';
 
 export const SessionsRepo = {
     create: async (data: Session) => {
-        const [id] = await db('sessions').insert(data);
-        return { id, ...data };
+        const [session] = await db('sessions').insert(data).returning('*');
+        return session;
     },
 
     findAll: async () => {
         return db('sessions').select('*');
     },
 
-    findByToken: async (token: string) => {
-        return db('sessions').select('*').where({ token }).first();
+    findByToken: async (sessionToken: string) => {
+        return db('sessions').select('*').where({ sessionToken }).first();
     },
 
-    update: async (token: string, data: Partial<Session>) => {
-        await db('sessions').update(data).where({ token });
-        return SessionsRepo.findByToken(token);
+    update: async (sessionToken: string, data: Partial<Session>) => {
+        await db('sessions').update(data).where({ sessionToken });
+        return SessionsRepo.findByToken(sessionToken);
     },
 
-    delete: async (token: string) => {
-        const result = await db('sessions').delete().where({ token });
+    delete: async (sessionToken: string) => {
+        const result = await db('sessions').delete().where({ sessionToken });
         return result > 0;
     },
 };

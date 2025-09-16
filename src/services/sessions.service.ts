@@ -25,7 +25,9 @@ export const SessionsService = {
     getSessionByToken: async (token: string) => {
         try {
             const session = await SessionsRepo.findByToken(token);
-            if (!session) throw new HttpError(404, 'Session not found');
+            if (!session) {
+                throw new HttpError(404, 'Session not found');
+            }
             return session;
         } catch (error) {
             throw new HttpError(500, 'Error fetching session');
