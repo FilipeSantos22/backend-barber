@@ -2,9 +2,15 @@ import type { Request, Response, NextFunction } from 'express';
 import { BarbeariasService } from '../services/barbearias.service';
 
 export const BarbeariasController = {
-    async listar(_req: Request, res: Response, next: NextFunction) {
+    async listar(req: Request, res: Response, next: NextFunction) {
         try {
-            const data = await BarbeariasService.listar();
+            const { search } = req.query;
+            let data;
+            if (search) {
+                data = await BarbeariasService.buscarPorNomeOuDescricao(String(search));
+            } else {
+                data = await BarbeariasService.listar();
+            }
             res.json(data);
         } catch (err) {
             next(err);

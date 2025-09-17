@@ -31,5 +31,10 @@ export const BarbeariasRepo = {
 
     async findByName(nome: string): Promise<Barbearia | undefined> {
         return db<Barbearia>('barbearia').where({ nome, excluido: false }).first();
+    },
+
+    async buscarPorNomeOuDescricao(search: string): Promise<Barbearia[]> {
+        return db('barbearia')
+            .whereILike('nome', `%${search}%`);
     }
 };

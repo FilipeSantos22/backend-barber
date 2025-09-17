@@ -78,5 +78,12 @@ export const BarbeariasService = {
 
     async listarBarbeiros(idBarbearia: number): Promise<any[]> {
         return UsuariosRepo.findBarbeirosByBarbearia(idBarbearia);
-    }
+    },
+
+    async buscarPorNomeOuDescricao(search: string): Promise<Barbearia[]> {
+        if (!search) {
+            throw new HttpError(400, 'Parâmetro de busca obrigatório');
+        }
+        return await BarbeariasRepo.buscarPorNomeOuDescricao(search);
+    },
 };
