@@ -86,4 +86,11 @@ export const BarbeariasService = {
         }
         return await BarbeariasRepo.buscarPorNomeOuDescricao(search);
     },
+
+    async buscarPorServicos(search: string): Promise<Barbearia[]> {
+        if (!search) {
+            throw new HttpError(400, 'Parâmetro de busca obrigatório');
+        }
+        return await ServicosRepo.buscarPorServicos(search);
+    }
 };

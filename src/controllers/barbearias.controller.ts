@@ -8,6 +8,9 @@ export const BarbeariasController = {
             let data;
             if (search) {
                 data = await BarbeariasService.buscarPorNomeOuDescricao(String(search));
+                if (data.length === 0) {   
+                    data = await BarbeariasService.buscarPorServicos(String(search));
+                }
             } else {
                 data = await BarbeariasService.listar();
             }

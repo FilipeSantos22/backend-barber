@@ -7,6 +7,11 @@ export const ServicosRepo = {
         return db<Servico>('servico').select('*').where({ excluido: false });
     },
 
+    async buscarPorNome(search: string) {
+        return db('servico')
+            .whereILike('nome', `%${search}%`)
+    },
+
     async findById(id: number): Promise<Servico | undefined> {
         return db<Servico>('servico').where({ idServico: id, excluido: false }).first();
     },
@@ -38,5 +43,15 @@ export const ServicosRepo = {
     async deleteByBarbearia(id: number, trx?: Knex.Transaction): Promise<void> {
         const q = trx ?? db;
         await q('servico').where({ idBarbearia: id }).update({ excluido: true });
+    },
+
+    async buscarPorServicos(search: string): Promise<Servico[]> {
+        return db('servico as s')
+            .join('barbearia as b', 's.idBarbearia', 'b.idBarbearia')
+            .where('s.nome', 'ilike', `%${search}%`)
+            .andWhere('s.excluido', false)
+            .andWhere('b.excluido', false)
+            .select('b.*')
+            .distinct();
     }
 };
