@@ -60,12 +60,12 @@ export const SessionsController = {
 
     deleteSession: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
-            if (!id) {
-                res.status(400).json({ message: 'id is required' });
+            const { token } = req.params;
+            if (!token) {
+                res.status(400).json({ message: 'Token is required' });
                 return;
             }
-            await SessionsService.deleteSession(id);
+            await SessionsService.deleteSession(token);
             res.status(204).send();
         } catch (error) {
             next(error);

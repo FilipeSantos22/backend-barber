@@ -44,10 +44,13 @@ export const SessionsService = {
         }
     },
 
-    deleteSession: async (id: string) => {
+    deleteSession: async (token: string) => {
         try {
-            const result = await SessionsRepo.delete(id);
-            if (!result) throw new HttpError(404, 'Session not found');
+            const result = await SessionsRepo.delete(token);
+            if (!result) {
+                throw new HttpError(404, 'Session not found');
+            }
+            return true;
         } catch (error) {
             throw new HttpError(500, 'Error deleting session');
         }
