@@ -2,10 +2,30 @@ import type { Request, Response, NextFunction } from 'express';
 import { AgendamentosService } from '../services/agendamentos.service';
 
 export const AgendamentosController = {
+
     async listar(_req: Request, res: Response, next: NextFunction) {
         try {
-            const data = await AgendamentosService.listar();
-            res.json(data);
+            const { idBarbearia, idServico, data_hora, idBarbeiro } = _req.query;
+            let result;
+
+            // Só chama se todos os filtros obrigatórios existirem
+            if (idBarbeiro && idServico && idBarbearia && data_hora) {
+                const filters = {
+                    idBarbeiro: Number(idBarbeiro),
+                    idServico: Number(idServico),
+                    idBarbearia: Number(idBarbearia),
+                    data: String(data_hora).slice(0, 10),
+                };
+
+                result = await AgendamentosService.listarComFiltros(filters);
+
+            } else if (idBarbeiro || idServico || idBarbearia || data_hora) {
+                // Se faltar algum filtro, retorne erro ou trate conforme sua regra
+                return res.status(400).json({ error: 'Todos os filtros são obrigatórios para buscar horários disponíveis.' });
+            } else {
+                result = await AgendamentosService.listar();
+            }
+            res.json(result);
         } catch (err) {
             next(err);
         }

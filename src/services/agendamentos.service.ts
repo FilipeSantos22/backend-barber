@@ -119,6 +119,23 @@ export const AgendamentosService = {
         const updated = await AgendamentosRepo.update(id, payload);
         return updated as Agendamento;
     },
-    
 
+    async listarComFiltros(filtrosHorarios: {
+        idBarbeiro: number;
+        idServico: number;
+        idBarbearia: number;
+        data: string;
+    }): Promise<{ horario: string }[]> {
+        // Validação simples
+        if (
+            !filtrosHorarios.idBarbeiro ||
+            !filtrosHorarios.idServico ||
+            !filtrosHorarios.idBarbearia ||
+            !filtrosHorarios.data
+        ) {
+            throw new HttpError(400, 'Todos os filtros são obrigatórios');
+        }
+
+        return await AgendamentosRepo.listarHorariosDisponiveis(filtrosHorarios);
+    }
 };
