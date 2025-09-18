@@ -46,12 +46,12 @@ export const SessionsController = {
 
     updateSession: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
-            if (!id) {
-                res.status(400).json({ message: 'id is required' });
+            const sessionToken = req.params.token;
+            if (!sessionToken) {
+                res.status(400).json({ message: 'Token is required' });
                 return;
             }
-            const session = await SessionsService.updateSession(id, req.body);
+            const session = await SessionsService.updateSession(sessionToken, req.body);
             res.status(200).json(session);
         } catch (error) {
             next(error);

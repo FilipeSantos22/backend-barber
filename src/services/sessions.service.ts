@@ -34,9 +34,9 @@ export const SessionsService = {
         }
     },
 
-    updateSession: async (id: string, data: Partial<Session>) => {
+    updateSession: async (sessionToken: string, data: Partial<Session>) => {
         try {
-            const session = await SessionsRepo.update(id, data);
+            const session = await SessionsRepo.update(sessionToken, data);
             if (!session) throw new HttpError(404, 'Session not found');
             return session;
         } catch (error) {
