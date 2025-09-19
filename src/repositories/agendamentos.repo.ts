@@ -6,8 +6,25 @@ export const AgendamentosRepo = {
         return db<Agendamento>('agendamento').select('*').where({ excluido: false });
     },
 
-    async findById(id: number): Promise<Agendamento | undefined> {
-        return db<Agendamento>('agendamento').where({ idAgendamento: id, excluido: false }).first();
+    async findById(idAgendamento: number): Promise<Agendamento | undefined> {
+        return db<Agendamento>('agendamento').where({ idAgendamento: idAgendamento, excluido: false }).select('*').first();
+    },
+
+    async findByIdUsuario(id: number): Promise<Agendamento | undefined> {
+        return await db('agendamento as a')
+        .leftJoin('servico as s', 'a.idServico', 's.idServico')
+        .leftJoin('barbearia as b', 'a.idBarbearia', 'b.idBarbearia')
+        .where('a.excluido', false)
+        .andWhere('a.id', id)
+        .select([
+            'a.*',
+            's.nome as servico_nome',
+            's.preco as servico_preco',
+            's.duracao_minutos as servico_duracao_minutos',
+            'b.nome as barbearia_nome',
+            'b.imagem_url as barbearia_imagem_url',
+            's.nome as servico_nome'
+        ]);
     },
 
     async findByUsuario(id: number): Promise<Agendamento[]> {

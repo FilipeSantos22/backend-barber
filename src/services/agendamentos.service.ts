@@ -26,6 +26,11 @@ export const AgendamentosService = {
         return row ?? null;
     },
 
+    async buscarPorIdUsuario(id: number): Promise<Agendamento | null> {
+        const row = await AgendamentosRepo.findByIdUsuario(id);
+        return row ?? null;
+    },
+
     async criar(payload: Partial<Agendamento>): Promise<Agendamento> {
         // validações básicas
         if (!payload.id || !payload.idServico || !payload.idBarbearia || !payload.data_hora) {
