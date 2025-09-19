@@ -23,7 +23,9 @@ export const AgendamentosRepo = {
             's.duracao_minutos as servico_duracao_minutos',
             'b.nome as barbearia_nome',
             'b.imagem_url as barbearia_imagem_url',
-            's.nome as servico_nome'
+            's.nome as servico_nome',
+            'b.endereco as barbearia_endereco',
+            'b.telefone as barbearia_telefone'
         ]);
     },
 
