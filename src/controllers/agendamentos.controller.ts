@@ -37,8 +37,8 @@ export const AgendamentosController = {
             if (!/^\d+$/.test(raw)) {
                 return res.status(400).json({ error: 'id inválido' });
             }
-            const idAgendamento = Number(raw);
-            const item = await AgendamentosService.buscarPorId(idAgendamento);
+            const id = Number(raw);
+            const item = await AgendamentosService.buscarPorId(id);
             if (!item) {
                 return res.status(404).json({ error: 'Agendamento não encontrado' });
             }

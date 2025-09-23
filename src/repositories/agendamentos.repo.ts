@@ -6,12 +6,12 @@ export const AgendamentosRepo = {
         return db<Agendamento>('agendamento').select('*').where({ excluido: false });
     },
 
-    async findById(idAgendamento: number): Promise<Agendamento | undefined> {
-        return db<Agendamento>('agendamento').where({ idAgendamento: idAgendamento, excluido: false }).first();
+    async findById(id: number): Promise<Agendamento | undefined> {
+        return db<Agendamento>('agendamento').where({ idAgendamento: id, excluido: false }).first();
     },
 
     async findByUsuario(id: number): Promise<Agendamento[]> {
-        return db<Agendamento>('agendamento').where({ id, excluido: false }).select('*');
+        return db<Agendamento>('agendamento').where({ id: id, excluido: false }).select('*');
     },
 
     async findByBarbeiro(idBarbeiro: number): Promise<Agendamento[]> {
