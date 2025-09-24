@@ -21,6 +21,10 @@ export const AgendamentosService = {
         return AgendamentosRepo.findAll();
     },
 
+    async buscarPorIdUsuario(idUsuario: number): Promise<Agendamento | null> {
+        return AgendamentosRepo.findByUsuario(idUsuario) as unknown as Agendamento | null;
+    },
+
     async buscarPorId(idAgendamento: number): Promise<Agendamento | null> {
         const row = await AgendamentosRepo.findById(idAgendamento);
         return row ?? null;

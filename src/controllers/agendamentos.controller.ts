@@ -48,6 +48,23 @@ export const AgendamentosController = {
         }
     },
 
+    async buscarPorIdUsuario(req: Request, res: Response, next: NextFunction) {
+        try {
+            const raw = String(req.params.id);
+            if (!/^\d+$/.test(raw)) {
+                return res.status(400).json({ error: 'id inválido' });
+            }
+            const id = Number(raw);
+            const item = await AgendamentosService.buscarPorIdUsuario(id);
+            if (!item) {
+                return res.status(404).json({ error: 'Agendamento não encontrado' });
+            }
+            res.json(item);
+        } catch (err) {
+            next(err);
+        }
+    },
+
     async criar(req: Request, res: Response, next: NextFunction) {
         try {
             const created = await AgendamentosService.criar(req.body);
