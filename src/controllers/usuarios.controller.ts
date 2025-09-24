@@ -8,6 +8,8 @@ function mapUserToAdapterUser(user: any) {
         emailVerified: user.emailverified ?? null,
         name: user.name ?? "",
         image: user.image ?? "",
+        tipo: user.tipo ?? "cliente",
+        idBarbearia: user.idBarbearia ?? null,
         // outros campos se quiser
     };
 }
