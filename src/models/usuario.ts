@@ -3,7 +3,7 @@ export type Usuario = {
   name: string;
   email: string;
   telefone?: string;
-  senha: string;
+  password: string;
   tipo: 'admin' | 'barbeiro' | 'cliente';
   data_criacao?: string;
   data_atualizacao?: string;

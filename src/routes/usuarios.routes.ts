@@ -13,11 +13,11 @@ router.get('/:id/agendamentos-barbeiro', asyncHandler(UsuariosController.listarA
 router.get('/:id/agendamentos-cliente', asyncHandler(UsuariosController.listarAgendamentos));
 router.get('/:id', asyncHandler(UsuariosController.buscarPorId));
 // router.get('/', asyncHandler(UsuariosController.buscarPorEmail));
-
+router.post("/login", UsuariosController.login);
 router.post('/', asyncHandler(UsuariosController.criar));
 router.put('/:id', asyncHandler(UsuariosController.atualizar));
 router.delete('/:id', asyncHandler(UsuariosController.remover));
-router.patch('/:id/senha', asyncHandler(UsuariosController.mudarSenha));
+router.patch('/recuperar-senha', asyncHandler(UsuariosController.recuperarSenha));
 
 export default router;
 

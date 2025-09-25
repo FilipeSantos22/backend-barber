@@ -43,7 +43,7 @@ export const UsuariosRepo = {
 
     // atualiza a senha diretamente (texto plano)
     async updatePassword(id: number, newPassword: string): Promise<void> {
-        await db<Usuario>('users').where({ id }).update({ senha: newPassword });
+        await db<Usuario>('users').where({ id }).update({ password: newPassword });
     },
 
     async findBarbeirosByBarbearia(idBarbearia: number): Promise<Usuario[]> {

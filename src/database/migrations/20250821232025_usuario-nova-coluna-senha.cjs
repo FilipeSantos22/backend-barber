@@ -8,7 +8,7 @@ exports.up = async function(knex) {
   }
   await knex.schema.alterTable('users', (table) => {
     // adiciona coluna como nullable para não quebrar registros existentes
-    table.string('senha', 255).nullable();
+    table.string('password', 255).nullable();
   });
 };
 
@@ -18,6 +18,6 @@ exports.down = async function(knex) {
         return;
     }
     await knex.schema.alterTable('users', (table) => {
-        table.dropColumn('senha');
+        table.dropColumn('password');
     });
 };

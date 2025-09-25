@@ -39,15 +39,14 @@ export const UsuariosController = {
             }
 
             // Gera uma senha aleatória caso não exista (para usuários OAuth)
-            if (!req.body.senha) {
-                req.body.senha = Math.random().toString(36).slice(-10);
+            if (!req.body.password) {
+                req.body.password = Math.random().toString(36).slice(-10);
             }
             const created = await UsuariosService.criar(req.body);
             if (!created) {
                 return res.status(500).json({ error: 'Erro ao criar usuário.' });
             }
-            const { senha, ...publicUser } = created;
-
+            const { password, ...publicUser } = created;
             res.status(201)
             .location(`/api/usuarios/${publicUser.id}`)
             .json(mapUserToAdapterUser(publicUser));
@@ -100,23 +99,20 @@ export const UsuariosController = {
         return !!user;
     },
 
-    async mudarSenha(req: Request, res: Response, next: NextFunction) {
+    async recuperarSenha(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = Number(req.params.id);
-            const { senhaAntiga, senha } = req.body;
+            const { email, novaSenha } = req.body;
+            if (!email || !novaSenha) {
+                return res.status(400).json({ error: "E-mail e nova senha são obrigatórios." });
+            }
 
-            const user = await UsuariosService.buscarPorId(id);
+            const user = await UsuariosService.buscarPorEmail(email);
             if (!user) {
-                return res.status(404).json({ error: 'Usuário não encontrado.' });
+                return res.status(404).json({ error: "Usuário não encontrado." });
             }
 
-            const isMatch = await UsuariosService.compararSenhas(senhaAntiga, user.senha);
-            if (!isMatch) {
-                return res.status(401).json({ error: 'Senha antiga não confere.' });
-            }
-
-            await UsuariosService.atualizarSenha(id, senha);
-            res.status(200).json({ message: 'Senha atualizada com sucesso.' });
+            await UsuariosService.atualizarSenha(user.id, novaSenha);
+            res.status(200).json({ message: "Senha atualizada com sucesso." });
         } catch (err) {
             next(err);
         }
@@ -174,4 +170,32 @@ export const UsuariosController = {
             next(err);
         }
     },
-}
+
+    async login(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { email, password } = req.body;
+            console.log('Tentativa de login com email:', req.body);
+            if (!email || !password) {
+                return res.status(400).json({ error: "E-mail e senha são obrigatórios." });
+            }
+
+            const user = await UsuariosService.buscarPorEmail(email);
+            if (!user) {
+                console.log('Usuário não encontrado para email:', email);
+                return res.status(401).json({ error: "Usuário não encontrado." });
+            }
+
+            const passwordCorrect = await UsuariosService.compararSenhas(password, user.password);
+            if (!passwordCorrect) {
+                return res.status(401).json({ error: "Senha inválida." });
+            }
+
+            // Remova a senha antes de retornar o usuário
+            const { password: _password, ...publicUser } = user;
+            console.log('Usuário autenticado com sucesso:', publicUser);
+            return res.json(publicUser);
+        } catch (err) {
+            next(err);
+        }
+    }
+};

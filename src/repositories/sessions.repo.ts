@@ -12,7 +12,7 @@ export const SessionsRepo = {
     },
 
     findByToken: async (sessionToken: string) => {
-        return db('sessions').select('*').where({ sessionToken }).first();
+        return db('sessions').select('*').where({ sessionToken: sessionToken }).first();
     },
 
     update: async (sessionToken: string, data: Partial<Session>) => {
