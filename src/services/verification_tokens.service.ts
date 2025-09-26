@@ -4,12 +4,8 @@ import { VerificationTokensRepo } from '../repositories/verification_tokens.repo
 
 export const VerificationTokensService = {
     createVerificationToken: async (data: any) => {
-        try {
-            const token = await VerificationTokensRepo.create(data);
-            return token;
-        } catch (error) {
-            throw new HttpError(500, 'Error creating verification token');
-        }
+        await VerificationTokensRepo.create(data);
+        return data;
     },
 
     getVerificationTokens: async () => {
