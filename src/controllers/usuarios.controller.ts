@@ -10,6 +10,7 @@ function mapUserToAdapterUser(user: any) {
         image: user.image ?? "",
         tipo: user.tipo ?? "cliente",
         idBarbearia: user.idBarbearia ?? null,
+        telefone: user.telefone ?? null,
         // outros campos se quiser
     };
 }
@@ -174,14 +175,12 @@ export const UsuariosController = {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password } = req.body;
-            console.log('Tentativa de login com email:', req.body);
             if (!email || !password) {
                 return res.status(400).json({ error: "E-mail e senha são obrigatórios." });
             }
 
             const user = await UsuariosService.buscarPorEmail(email);
             if (!user) {
-                console.log('Usuário não encontrado para email:', email);
                 return res.status(401).json({ error: "Usuário não encontrado." });
             }
 
@@ -192,7 +191,6 @@ export const UsuariosController = {
 
             // Remova a senha antes de retornar o usuário
             const { password: _password, ...publicUser } = user;
-            console.log('Usuário autenticado com sucesso:', publicUser);
             return res.json(publicUser);
         } catch (err) {
             next(err);
