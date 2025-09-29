@@ -1,25 +1,25 @@
 import type { Request, Response, NextFunction } from 'express';
 import { AgendamentosService } from '../services/agendamentos.service';
+import { ServicosRepo } from '../repositories/servicos.repo';
 
 export const AgendamentosController = {
 
     async listar(_req: Request, res: Response, next: NextFunction) {
         try {
-            const { idBarbearia, idServico, data_hora, idBarbeiro } = _req.query;
+            const { idBarbearia, data_hora, idBarbeiro } = _req.query;
             let result;
 
             // Só chama se todos os filtros obrigatórios existirem
-            if (idBarbeiro && idServico && idBarbearia && data_hora) {
+            if (idBarbeiro && idBarbearia && data_hora) {
                 const filters = {
                     idBarbeiro: Number(idBarbeiro),
-                    idServico: Number(idServico),
                     idBarbearia: Number(idBarbearia),
                     data: String(data_hora).slice(0, 10),
                 };
 
                 result = await AgendamentosService.listarComFiltros(filters);
 
-            } else if (idBarbeiro || idServico || idBarbearia || data_hora) {
+            } else if (idBarbeiro || idBarbearia || data_hora) {
                 // Se faltar algum filtro, retorne erro ou trate conforme sua regra
                 return res.status(400).json({ error: 'Todos os filtros são obrigatórios para buscar horários disponíveis.' });
             } else {
@@ -106,8 +106,26 @@ export const AgendamentosController = {
                 return res.status(400).json({ error: 'id inválido' });
             }
             const id = Number(raw);
-            await AgendamentosService.remover(id);
-            res.status(200).json({ message: 'Agendamento excluído com sucesso.' });
+
+            const agendamento = await AgendamentosService.buscarPorId(id);
+            if (!agendamento) {
+                return res.status(404).json({ error: 'Agendamento não encontrado' });
+            }
+
+            const servico = await ServicosRepo.findById(agendamento.idServico);
+            if (!servico) {
+                return res.status(404).json({ error: 'Serviço não encontrado' });
+            }
+
+            await AgendamentosService.removerIntervalo({
+                idBarbeiro: agendamento.idBarbeiro,
+                idServico: agendamento.idServico,
+                idBarbearia: agendamento.idBarbearia,
+                data_hora_inicio: agendamento.data_hora,
+                duracao_minutos: servico.duracao_minutos?? 30
+            });
+
+            res.status(200).json({ message: 'Agendamento(s) excluído(s) com sucesso.' });
         } catch (err) {
             next(err);
         }

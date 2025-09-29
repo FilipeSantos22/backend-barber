@@ -10,4 +10,5 @@ export type Agendamento = {
     data_criacao?: string;
     data_atualizacao?: string;
     excluido?: boolean;
+    duracao_minutos: number; // duração do serviço em minutos -> da tabela de serviços
 };

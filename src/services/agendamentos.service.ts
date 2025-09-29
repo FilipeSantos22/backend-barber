@@ -30,7 +30,7 @@ export const AgendamentosService = {
         return row ?? null;
     },
 
-    async criar(payload: Partial<Agendamento>): Promise<Agendamento> {
+    async criar(payload: Partial<Agendamento>): Promise<Agendamento[]> {
         // validações básicas
         if (!payload.id || !payload.idServico || !payload.idBarbearia || !payload.data_hora) {
             throw new HttpError(400, 'id, idServico, idBarbearia e data_hora são obrigatórios');
@@ -57,16 +57,39 @@ export const AgendamentosService = {
             throw new HttpError(404, 'Barbearia não encontrada');
         }
 
-        // criar
-        return AgendamentosRepo.create({
-            id: payload.id,
-            idBarbeiro: payload.idBarbeiro ?? payload.id, // se não informar, pode usar id (ajuste se necessário)
-            idServico: payload.idServico,
-            idBarbearia: payload.idBarbearia,
-            data_hora: payload.data_hora,
-            descricao: payload.descricao ?? null,
-            status: payload.status ?? 'pendente'
-        });
+        // Cálculo dos horários ocupados
+        const duracao = servico.duracao_minutos ?? 30;
+        const horariosOcupados = await this.calcularHorariosOcupados(payload.data_hora, duracao);
+
+        // Verifica se todos os horários estão livres
+        for (const horario of horariosOcupados) {
+            const existe = await AgendamentosRepo.findAgendamentoPorHorario({
+                idBarbeiro: payload.idBarbeiro ?? payload.id,
+                idServico: payload.idServico,
+                idBarbearia: payload.idBarbearia,
+                data_hora: horario
+            });
+            if (existe) {
+                throw new HttpError(409, `Horário ${new Date(horario).toLocaleTimeString()} já está ocupado para este barbeiro`);
+            }
+        }
+
+        // Cria um agendamento para cada horário ocupado
+        const agendamentosCriados: Agendamento[] = [];
+        for (const horario of horariosOcupados) {
+            const agendamento = await AgendamentosRepo.create({
+                id: payload.id,
+                idBarbeiro: payload.idBarbeiro ?? payload.id,
+                idServico: payload.idServico,
+                idBarbearia: payload.idBarbearia,
+                data_hora: horario,
+                descricao: payload.descricao ?? null,
+                status: payload.status ?? 'pendente'
+            });
+            agendamentosCriados.push(agendamento);
+        }
+
+        return agendamentosCriados;
     },
 
     async atualizar(id: number, payload: Partial<Agendamento>): Promise<Agendamento> {
@@ -126,14 +149,12 @@ export const AgendamentosService = {
 
     async listarComFiltros(filtrosHorarios: {
         idBarbeiro: number;
-        idServico: number;
         idBarbearia: number;
         data: string;
     }): Promise<{ horario: string }[]> {
         // Validação simples
         if (
             !filtrosHorarios.idBarbeiro ||
-            !filtrosHorarios.idServico ||
             !filtrosHorarios.idBarbearia ||
             !filtrosHorarios.data
         ) {
@@ -141,5 +162,38 @@ export const AgendamentosService = {
         }
 
         return await AgendamentosRepo.listarHorariosDisponiveis(filtrosHorarios);
+    },
+
+    async calcularHorariosOcupados(data_hora: string, duracao_minutos: number): Promise<string[]> {
+        const horarios: string[] = [];
+        let horarioAtual = new Date(data_hora);
+
+        for (let i = 0; i < duracao_minutos; i += 30) {
+            horarios.push(horarioAtual.toISOString());
+            horarioAtual.setMinutes(horarioAtual.getMinutes() + 30);
+        }
+        return horarios;
+    },
+
+    async removerIntervalo({
+        idBarbeiro,
+        idServico,
+        idBarbearia,
+        data_hora_inicio,
+        duracao_minutos
+    }: {
+        idBarbeiro: number;
+        idServico: number;
+        idBarbearia: number;
+        data_hora_inicio: string;
+        duracao_minutos: number;
+    }): Promise<void> {
+        const horariosOcupados = await this.calcularHorariosOcupados(data_hora_inicio, duracao_minutos);
+        await AgendamentosRepo.excluirAgendamentosIntervalo({
+            idBarbeiro,
+            idServico,
+            idBarbearia,
+            horarios: horariosOcupados
+        });
     }
 };

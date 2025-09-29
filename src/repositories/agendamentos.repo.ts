@@ -41,12 +41,10 @@ export const AgendamentosRepo = {
 
     async listarHorariosDisponiveis({
         idBarbeiro,
-        idServico,
         idBarbearia,
         data // formato 'YYYY-MM-DD'
     }: {
         idBarbeiro: number;
-        idServico: number;
         idBarbearia: number;
         data: string;
     }): Promise<{ horario: string }[]> {
@@ -62,7 +60,6 @@ export const AgendamentosRepo = {
                 SELECT 1
                 FROM agendamento a
                 WHERE a."idBarbeiro" = ?
-                AND a."idServico" = ?
                 AND a."idBarbearia" = ?
                 AND a."data_hora"::time = h::time
                 AND a."data_hora"::date = ?::date
@@ -71,9 +68,56 @@ export const AgendamentosRepo = {
             )
             ORDER BY horario
             `,
-            [data, data, idBarbeiro, idServico, idBarbearia, data]
+            [data, data, idBarbeiro, idBarbearia, data]
         );
         return horarios.rows;
+    },
+
+    async findAgendamentoPorHorario({
+        idBarbeiro,
+        idServico,
+        idBarbearia,
+        data_hora
+    }: {
+        idBarbeiro: number;
+        idServico: number;
+        idBarbearia: number;
+        data_hora: string;
+    }): Promise<Agendamento | undefined> {
+        return db<Agendamento>('agendamento')
+            .where({
+                idBarbeiro,
+                idServico,
+                idBarbearia,
+                excluido: false
+            })
+            .andWhere('data_hora', data_hora)
+            .andWhere(function () {
+                this.whereNot('status', 'cancelado').orWhereNull('status');
+            })
+            .first();
+    },
+
+    async excluirAgendamentosIntervalo({
+        idBarbeiro,
+        idServico,
+        idBarbearia,
+        horarios
+    }: {
+        idBarbeiro: number;
+        idServico: number;
+        idBarbearia: number;
+        horarios: string[];
+    }): Promise<void> {
+        await db('agendamento')
+            .where({
+                idBarbeiro,
+                idServico,
+                idBarbearia,
+                excluido: false
+            })
+            .whereIn('data_hora', horarios)
+            .update({ excluido: true });
     }
 
 };
